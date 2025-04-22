@@ -1,119 +1,256 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Creamy Hub - NFT & Token Platform</title>
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Ethers.js CDN -->
-  <script src="https://unpkg.com/ethers@5.7.2/dist/ethers.umd.min.js"></script>
-  <!-- Debug ethers load -->
-  <script>
-    window.addEventListener('load', () => {
-      console.log('ethers loaded:', typeof window.ethers !== 'undefined' ? window.ethers : 'not loaded');
-    });
-  </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CreamyHub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Lexend', sans-serif;
+            background-color: #f0f0f0;
+            position: relative;
+            overflow-x: hidden;
+        }
+        .hidden {
+            display: none;
+        }
+        .tab-button.active {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .checker-table th, .checker-table td {
+            padding: 0.5rem;
+            text-align: center;
+        }
+        /* Animasi Daun Teh */
+        .tea-leaves-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        .tea-leaf {
+            position: absolute;
+            width: 20px;
+            height: 10px;
+            background: linear-gradient(45deg, #4CAF50, #66BB6A);
+            border-radius: 50% 50% 0 0;
+            opacity: 0.6;
+            animation: fall 6s linear infinite;
+        }
+        .tea-leaf:nth-child(1) { left: 5%; animation-delay: 0s; }
+        .tea-leaf:nth-child(2) { left: 15%; animation-delay: 0.5s; }
+        .tea-leaf:nth-child(3) { left: 25%; animation-delay: 1s; }
+        .tea-leaf:nth-child(4) { left: 35%; animation-delay: 1.5s; }
+        .tea-leaf:nth-child(5) { left: 50%; animation-delay: 2s; }
+        .tea-leaf:nth-child(6) { left: 65%; animation-delay: 0.3s; }
+        .tea-leaf:nth-child(7) { left: 80%; animation-delay: 0.7s; }
+        .tea-leaf:nth-child(8) { left: 95%; animation-delay: 1.2s; }
+        @keyframes fall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
 </head>
-<body class="bg-gray-100 min-h-screen flex flex-col">
-  <!-- Header -->
-  <header class="bg-blue-600 text-white p-4 shadow-md">
-    <h1 class="text-2xl font-bold">Creamy Hub</h1>
-    <p class="text-sm">Your NFT & Token Platform on Tea Sepolia</p>
-  </header>
-
-  <!-- Main Content -->
-  <main class="flex-grow flex items-center justify-center p-4">
-    <!-- Wallet Section -->
-    <div id="wallet-section" class="bg-white rounded-lg shadow-lg p-6 max-w-md w-full">
-      <h2 class="text-xl font-semibold mb-4">Connect Your Wallet</h2>
-      <button id="connect-wallet" class="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition">Connect Wallet</button>
-      <p id="error" class="hidden text-red-500 mt-2"></p>
+<body class="h-screen bg-gray-100 flex flex-col items-center p-4 gap-4">
+    <!-- Animasi Daun Teh -->
+    <div class="tea-leaves-container">
+        <div class="tea-leaf"></div>
+        <div class="tea-leaf"></div>
+        <div class="tea-leaf"></div>
+        <div class="tea-leaf"></div>
+        <div class="tea-leaf"></div>
+        <div class="tea-leaf"></div>
+        <div class="tea-leaf"></div>
+        <div class="tea-leaf"></div>
     </div>
+
+    <!-- Navbar -->
+    <nav class="w-full bg-white rounded-lg shadow-lg p-4 flex items-center justify-between">
+        <div class="text-xl font-bold text-gray-800">CreamyHub</div>
+        <div class="text-sm text-gray-600">Tea Sepolia Tools</div>
+    </nav>
 
     <!-- Main Section -->
-    <div id="main-section" class="hidden bg-white rounded-lg shadow-lg p-6 max-w-md w-full">
-      <p id="account" class="text-gray-700 mb-4"></p>
-      
-      <!-- Tab Navigation -->
-      <div class="flex border-b mb-4">
-        <button id="tab-mint-nft" class="px-4 py-2 text-gray-600 border-b-2 border-transparent hover:border-blue-500 transition tab-button active">Mint NFT</button>
-        <button id="tab-deploy-token" class="px-4 py-2 text-gray-600 border-b-2 border-transparent hover:border-blue-500 transition tab-button">Deploy Token</button>
-        <button id="tab-multi-sender" class="px-4 py-2 text-gray-600 border-b-2 border-transparent hover:border-blue-500 transition tab-button">Multi Sender</button>
-        <button id="tab-checker-tea" class="px-4 py-2 text-gray-600 border-b-2 border-transparent hover:border-blue-500 transition tab-button">Checker TEA</button>
-        <button id="tab-staking-oss" class="px-4 py-2 text-gray-600 border-b-2 border-transparent hover:border-blue-500 transition tab-button">Staking OSS</button>
-      </div>
+    <div id="main-section" class="flex-1 w-full max-w-3xl bg-white rounded-lg shadow-lg p-4 flex flex-col justify-center">
+        <!-- Connect Wallet Button (shown if not connected) -->
+        <div id="connect-wallet-section" class="">
+            <h1 class="text-2xl font-bold text-center text-gray-800 mb-4">Connect Your Wallet</h1>
+            <button id="connect-wallet" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+                Connect Wallet
+            </button>
+        </div>
 
-      <!-- Tab Content -->
-      <!-- Mint NFT -->
-      <div id="content-mint-nft" class="tab-content">
-        <h2 class="text-lg font-semibold mb-2">Mint an NFT</h2>
-        <button id="mint-nft" class="w-full bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition">Mint NFT</button>
-      </div>
+        <!-- Wallet Info (shown after connecting) -->
+        <div id="wallet-info" class="hidden mb-4 border-b border-gray-200 pb-4">
+            <p id="account" class="text-center text-gray-700 break-all font-semibold"></p>
+            <p id="balance" class="text-center text-gray-700 mt-2"></p>
+            <div class="flex justify-center gap-2 mt-4 flex-wrap">
+                <button id="copy-address" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-1 px-3 rounded-lg transition-colors">
+                    Copy Address
+                </button>
+                <button id="check-explorer" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-1 px-3 rounded-lg transition-colors">
+                    Check Explorer
+                </button>
+                <button id="recent-tx" class="bg-purple-500 hover:bg-purple-600 text-white font-semibold py-1 px-3 rounded-lg transition-colors">
+                    Recent Transaction
+                </button>
+                <button id="disconnect-wallet" class="bg-red-500 hover:bg-red-600 text-white font-semibold py-1 px-3 rounded-lg transition-colors">
+                    Disconnect
+                </button>
+            </div>
+        </div>
 
-      <!-- Deploy Token -->
-      <div id="content-deploy-token" class="tab-content hidden">
-        <h2 class="text-lg font-semibold mb-2">Deploy a Token</h2>
-        <input id="token-name" type="text" placeholder="Token Name" class="w-full p-2 mb-2 border rounded-lg">
-        <input id="token-symbol" type="text" placeholder="Token Symbol" class="w-full p-2 mb-2 border rounded-lg">
-        <button id="deploy-token" class="w-full bg-purple-500 text-white py-2 px-4 rounded-lg hover:bg-purple-600 transition">Deploy Token</button>
-      </div>
+        <!-- Tabs -->
+        <div id="tabs-section" class="hidden">
+            <div class="flex flex-wrap border-b border-gray-200 mb-4">
+                <button id="tab-mint-nft" class="tab-button flex-1 sm:flex-none py-2 px-4 text-center font-semibold rounded-t-lg hover:bg-gray-200 transition-colors active">Mint NFT</button>
+                <button id="tab-deploy-token" class="tab-button flex-1 sm:flex-none py-2 px-4 text-center font-semibold rounded-t-lg hover:bg-gray-200 transition-colors">Deploy Token</button>
+                <button id="tab-multi-sender" class="tab-button flex-1 sm:flex-none py-2 px-4 text-center font-semibold rounded-t-lg hover:bg-gray-200 transition-colors">Multi Sender</button>
+                <button id="tab-checker-tea" class="tab-button flex-1 sm:flex-none py-2 px-4 text-center font-semibold rounded-t-lg hover:bg-gray-200 transition-colors">Checker TEA</button>
+                <button id="tab-staking-oss" class="tab-button flex-1 sm:flex-none py-2 px-4 text-center font-semibold rounded-t-lg hover:bg-gray-200 transition-colors">Staking OSS</button>
+            </div>
 
-      <!-- Multi Sender -->
-      <div id="content-multi-sender" class="tab-content hidden">
-        <h2 class="text-lg font-semibold mb-2">Multi Sender</h2>
-        <input id="multi-sender-token" type="text" placeholder="Token Address" class="w-full p-2 mb-2 border rounded-lg">
-        <textarea id="multi-sender-addresses" placeholder="Addresses (one per line)" class="w-full p-2 mb-2 border rounded-lg h-24"></textarea>
-        <input id="multi-sender-amount" type="text" placeholder="Amount per address" class="w-full p-2 mb-2 border rounded-lg">
-        <button id="multi-sender-btn" class="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition">Send Tokens</button>
-      </div>
+            <!-- Tab Contents -->
+            <!-- Mint NFT -->
+            <div id="content-mint-nft" class="tab-content p-4 border border-gray-200 rounded-lg">
+                <h2 class="text-xl font-semibold text-gray-800 mb-2">Mint NFT</h2>
+                <p class="text-gray-600 mb-4">Create and mint your own NFT on the Tea Sepolia network.</p>
+                <button id="mint-nft" class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+                    Mint NFT
+                </button>
+            </div>
 
-      <!-- Checker TEA -->
-      <div id="content-checker-tea" class="tab-content hidden">
-        <h2 class="text-lg font-semibold mb-2">Checker TEA</h2>
-        <input id="checker-tea-address" type="text" placeholder="Wallet Address" class="w-full p-2 mb-2 border rounded-lg">
-        <button id="checker-tea-btn" class="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition">Check Balance</button>
-        <p id="checker-tea-result" class="text-gray-700 mt-2"></p>
-      </div>
+            <!-- Deploy Token -->
+            <div id="content-deploy-token" class="tab-content hidden p-4 border border-gray-200 rounded-lg">
+                <h2 class="text-xl font-semibold text-gray-800 mb-2">Deploy Token</h2>
+                <p class="text-gray-600 mb-4">Deploy a new token contract with a custom name and symbol.</p>
+                <input id="token-name" type="text" placeholder="Token Name" class="w-full p-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input id="token-symbol" type="text" placeholder="Token Symbol" class="w-full p-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <button id="deploy-token" class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+                    Deploy Token
+                </button>
+            </div>
 
-      <!-- Staking OSS -->
-<div id="content-staking-oss" class="tab-content hidden">
-  <h2 class="text-lg font-semibold mb-2">Staking OSS (TEA)</h2>
-  <input id="staking-amount" type="text" placeholder="Amount to Stake (TEA)" class="w-full p-2 mb-2 border rounded-lg">
-  <button id="stake-btn" class="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition mb-2">Stake TEA</button>
-  <button id="unstake-btn" class="w-full bg-gray-500 text-white py-2 px-4 rounded-lg hover:bg-gray-600 transition">Unstake TEA</button>
-</div>
+            <!-- Multi Sender -->
+            <div id="content-multi-sender" class="tab-content hidden p-4 border border-gray-200 rounded-lg">
+                <h2 class="text-xl font-semibold text-gray-800 mb-2">Multi Sender</h2>
+                <p class="text-gray-600 mb-4">Send tokens to multiple addresses in one transaction.</p>
+                <input id="multi-sender-token" type="text" placeholder="Token Address" class="w-full p-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <textarea id="multi-sender-addresses" placeholder="Recipient Addresses (one per line)" class="w-full p-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 h-32"></textarea>
+                <input id="multi-sender-amount" type="text" placeholder="Amount per Address" class="w-full p-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <button id="multi-sender-btn" class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+                    Send Tokens
+                </button>
+            </div>
+
+            <!-- Checker TEA -->
+            <div id="content-checker-tea" class="tab-content hidden p-4 border border-gray-200 rounded-lg">
+                <h2 class="text-xl font-semibold text-gray-800 mb-2">Checker TEA</h2>
+                <p class="text-gray-600 mb-4">Check the status of your wallet's activities on Tea Sepolia.</p>
+                <input id="checker-tea-address" type="text" placeholder="Wallet Address" class="w-full p-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <button id="checker-tea-btn" class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors mb-4">
+                    Check
+                </button>
+                <div id="checker-tea-result" class="mt-4 hidden">
+                    <table class="checker-table w-full border-collapse border border-gray-300">
+                        <thead>
+                            <tr class="bg-gray-100">
+                                <th class="border border-gray-300">Action</th>
+                                <th class="border border-gray-300">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="checker-table-body">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Staking OSS -->
+            <div id="content-staking-oss" class="tab-content hidden p-4 border border-gray-200 rounded-lg">
+                <h2 class="text-xl font-semibold text-gray-800 mb-2">Staking OSS</h2>
+                <p class="text-gray-600 mb-4">Stake or unstake your TEA tokens to earn rewards.</p>
+                <input id="staking-amount" type="text" placeholder="Amount to Stake/Unstake (TEA)" class="w-full p-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <p id="staked-balance" class="text-gray-700 mb-4"></p>
+                <div class="flex flex-col sm:flex-row gap-2">
+                    <button id="stake-btn" class="flex-1 bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+                        Stake TEA
+                    </button>
+                    <button id="unstake-btn" class="flex-1 bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+                        Unstake TEA
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <p id="error" class="hidden text-red-500 text-center mt-4"></p>
     </div>
-  </main>
 
-  <!-- Wallet Choice Modal -->
-  <div id="wallet-choice-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-    <div class="bg-white rounded-lg p-6 max-w-sm w-full">
-      <h3 class="text-lg font-semibold mb-4">Choose a Wallet</h3>
-      <button id="connect-metamask" class="w-full bg-orange-500 text-white py-2 px-4 rounded-lg hover:bg-orange-600 transition mb-2">Connect with MetaMask</button>
-      <button id="connect-okx" class="w-full bg-gray-700 text-white py-2 px-4 rounded-lg hover:bg-gray-800 transition mb-2">Connect with OKX</button>
-      <button id="wallet-choice-close" class="w-full bg-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-400 transition">Cancel</button>
+    <!-- Footer -->
+    <footer class="w-full p-4 text-center text-gray-600 bg-white rounded-lg shadow-lg">
+        <p>© 2025 CreamyHub. All rights reserved.</p>
+    </footer>
+
+    <!-- Wallet Choice Modal -->
+    <div id="wallet-choice-modal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg p-6 w-full max-w-sm">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Choose Wallet</h2>
+            <button id="connect-metamask" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded-lg mb-2 transition-colors">
+                MetaMask
+            </button>
+            <button id="connect-okx" class="w-full bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2 px-4 rounded-lg mb-4 transition-colors">
+                OKX Wallet
+            </button>
+            <button id="wallet-choice-close" class="w-full bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-lg transition-colors">
+                Cancel
+            </button>
+        </div>
     </div>
-  </div>
 
-  <!-- Loading Modal -->
-  <div id="loading-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-    <div class="bg-white rounded-lg p-6 max-w-sm w-full flex items-center justify-center">
-      <div class="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-500"></div>
-      <p class="ml-4 text-gray-700">Processing...</p>
+    <!-- Recent Transaction Modal -->
+    <div id="recent-tx-modal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg p-6 w-full max-w-md">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Recent Transactions</h2>
+            <div id="recent-tx-list" class="max-h-64 overflow-y-auto mb-4">
+                <!-- Daftar transaksi akan diisi oleh JavaScript -->
+            </div>
+            <button id="recent-tx-close" class="w-full bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-lg transition-colors">
+                Close
+            </button>
+        </div>
     </div>
-  </div>
 
-  <!-- Custom Alert Modal -->
-  <div id="alert-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-    <div class="bg-white rounded-lg p-6 max-w-sm w-full">
-      <h3 id="alert-title" class="text-lg font-semibold mb-2"></h3>
-      <p id="alert-message" class="text-gray-700 mb-4 break-words"></p>
-      <button id="alert-close" class="bg-blue-500 text-white py-1 px-3 rounded-lg hover:bg-blue-600 transition">Close</button>
+    <!-- Alert Modal -->
+    <div id="alert-modal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg p-6 w-full max-w-sm">
+            <h2 id="alert-title" class="text-xl font-semibold mb-4"></h2>
+            <p id="alert-message" class="text-gray-700 mb-4"></p>
+            <button id="alert-close" class="w-full bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-lg transition-colors">
+                Close
+            </button>
+        </div>
     </div>
-  </div>
 
-  <!-- Load app.js -->
-  <script src="app.js"></script>
+    <!-- Loading Modal -->
+    <div id="loading-modal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg p-6 w-full max-w-sm text-center">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Loading...</h2>
+            <div class="loader border-t-4 border-blue-500 rounded-full w-8 h-8 animate-spin mx-auto"></div>
+        </div>
+    </div>
+
+    <script src="app.js" defer></script>
 </body>
 </html>
