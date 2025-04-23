@@ -11,7 +11,7 @@ This is the frontend for the CreamyHub dApp, built to interact with smart contra
 The smart contracts for this project are located at: [creamy-hub-contracts](https://github.com/robynasuro/creamy-hub-contracts)
 
 ## Deployment
-Deployed on Vercel: [Insert Vercel URL here after deployment]
+Deployed on Vercel: https://creamyhub.vercel.app
 
 ## Setup
 1. Clone this repository.
