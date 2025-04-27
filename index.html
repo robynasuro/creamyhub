@@ -43,15 +43,21 @@
         border-color: #718096;
       }
       body.dark #wallet-choice-modal .bg-white,
-      body.dark #recent-tx-modal .bg-white {
+      body.dark #recent-tx-modal .bg-white,
+      body.dark #faucet-modal .bg-white,
+      body.dark #message .bg-white {
         background-color: #2d3748;
         color: #e2e8f0;
       }
       body.dark #wallet-choice-modal h2,
-      body.dark #recent-tx-modal h2 {
+      body.dark #recent-tx-modal h2,
+      body.dark #faucet-modal h2,
+      body.dark #message h2 {
         color: #e2e8f0;
       }
-      body.dark #recent-tx-modal p {
+      body.dark #recent-tx-modal p,
+      body.dark #faucet-modal p,
+      body.dark #message p {
         color: #a0aec0;
       }
       .hidden {
@@ -146,6 +152,28 @@
         }
         .tab-content {
           padding: 1rem;
+        }
+        /* Jarakkan tombol Faucet dari CreamyHub dan pastikan navbar lebih seimbang */
+        #faucet-btn {
+          margin-left: 1rem;
+          margin-right: 0.5rem;
+        }
+        .nav-tools-text {
+          margin-right: 0.5rem;
+        }
+        /* Perkecil ukuran pop-up di mobile */
+        #message .bg-white {
+          max-width: 90%;
+          padding: 1rem;
+        }
+        #message h2 {
+          font-size: 1.125rem; /* 18px */
+        }
+        #message p {
+          font-size: 0.875rem; /* 14px */
+        }
+        #message button {
+          padding: 0.5rem 1rem;
         }
       }
       .toggle-container {
@@ -263,12 +291,12 @@
         color: #4CAF50;
         font-weight: 500;
       }
-      #alert-message a {
+      #message a {
         color: #3b82f6;
         text-decoration: underline;
         transition: color 0.3s;
       }
-      #alert-message a:hover {
+      #message a:hover {
         color: #2563eb;
       }
       .view-explorer {
@@ -280,7 +308,6 @@
       .view-explorer:hover {
         color: #2563eb;
       }
-      /* CSS untuk pop-up pending transaksi */
       .animate-spin {
         animation: spin 1s linear infinite;
       }
@@ -305,7 +332,10 @@
     <nav class="w-full bg-white rounded-lg shadow-lg p-4 flex items-center justify-between">
         <div class="text-xl font-bold text-gray-800">CreamyHub</div>
         <div class="flex items-center gap-2">
-            <div class="text-sm text-gray-600">Tea Sepolia Tools</div>
+            <button id="faucet-btn" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-1 px-3 rounded-lg transition-colors">
+                Faucet
+            </button>
+            <div class="text-sm text-gray-600 nav-tools-text">Tea Sepolia Tools</div>
             <div class="toggle-container">
                 <label class="toggle-switch">
                     <input type="checkbox" id="theme-toggle" aria-label="Toggle Dark Mode">
@@ -423,15 +453,16 @@
             </div>
 
             <div id="multi-sender" class="tab-content hidden p-4 border border-gray-200 rounded-lg">
-                <h2 class="text-xl font-semibold text-gray-800 mb-2">Multi Sender</h2>
-                <p class="text-gray-600 mb-4">Send tokens to multiple addresses in one transaction. Use a single amount for all addresses or match amounts to addresses.</p>
-                <input id="token-address" type="text" placeholder="Token Address (e.g., 0x123...)" class="w-full p-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <textarea id="addresses" placeholder="Recipient Addresses, one per line (e.g.:\n0x123...\n0x456...)" class="w-full p-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 h-32"></textarea>
+                <h2 class="text-xl font-semibold text-gray-800 mb-2">Multi Sender (TEA)</h2>
+                <p class="text-gray-600 mb-4">Send TEA to multiple addresses in one transaction. Use a single amount for all addresses or match amounts to addresses.</p>
+                <textarea id="addresses" placeholder="Enter one address per line, example:
+0xea17b58e3e9ee173ab08a3ff9fc6728663c9a8e6
+0x1c567c9b5e4f02ec80a94355dfe302dd0ed77107" class="w-full p-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 h-32"></textarea>
                 <input id="amounts" type="text" placeholder="Amounts, comma separated or single amount (e.g., 2 or 2,2,2)" class="w-full p-2 mb-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <div id="multi-send-preview" class="text-gray-700 mt-2 mb-2"></div>
                 <div id="multi-send-error" class="text-red-500 mt-2 hidden"></div>
                 <button id="multi-send-btn" class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
-                    Send Tokens
+                    Multi Send TEA
                 </button>
             </div>
 
@@ -461,12 +492,11 @@
 
             <div id="checker-tea" class="tab-content hidden p-4 border border-gray-200 rounded-lg">
                 <h2 class="text-xl font-semibold text-gray-800 mb-2">Checker TEA</h2>
-                <p class="text-gray-600 mb-4">Check TEA and USDT balance for any address.</p>
-                <input id="checker-address" type="text" placeholder="Enter Address (e.g., 0x123...)" class="w-full p-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <button id="check-tea-btn" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors mb-4">
-                    Check Balance
+                <p class="text-gray-600 mb-4">Check your activities on the Tea Sepolia network.</p>
+                <div id="checker-result" class="mt-4"></div>
+                <button id="check-tea-btn" class="mt-4 w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+                    Check Activities
                 </button>
-                <p id="checker-result" class="text-gray-600 whitespace-pre-line"></p>
             </div>
         </div>
     </div>
@@ -502,6 +532,20 @@
         </div>
     </div>
 
+    <div id="faucet-modal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg p-6 w-full max-w-sm">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">USDT Faucet</h2>
+            <p class="text-gray-600 mb-4">Claim 1000 USDT for adding liquidity. You can claim once every 24 hours.</p>
+            <p id="faucet-status" class="text-gray-600 mb-4"></p>
+            <button id="claim-faucet" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors mb-4">
+                Claim 1000 USDT
+            </button>
+            <button id="faucet-close" class="w-full bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-lg transition-colors">
+                Close
+            </button>
+        </div>
+    </div>
+
     <div id="recent-tx-modal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden">
         <div class="bg-white rounded-lg p-6 w-full max-w-md">
             <h2 class="text-xl font-semibold text-gray-800 mb-4">Recent Transactions</h2>
@@ -512,22 +556,21 @@
         </div>
     </div>
 
-    <div id="alert" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden">
+    <div id="message" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden">
         <div class="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md shadow-lg">
             <div class="flex items-center gap-3 mb-4">
-                <svg id="alert-icon" class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 3c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                <svg id="message-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Ikon akan diatur oleh JavaScript -->
                 </svg>
-                <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200">Alert</h2>
+                <h2 id="message-title" class="text-xl font-semibold text-gray-800 dark:text-gray-200"></h2>
             </div>
-            <p id="alert-message" class="text-gray-700 dark:text-gray-300 mb-6 leading-relaxed"></p>
-            <button id="close-alert" class="w-full bg-gray-300 hover:bg-gray-400 dark:bg-gray-600 dark:hover:bg-gray-500 text-gray-800 dark:text-gray-200 font-semibold py-2 px-4 rounded-lg transition-colors">
+            <p id="message-text" class="text-gray-700 dark:text-gray-300 mb-6 leading-relaxed"></p>
+            <button id="close-message" class="w-full bg-gray-300 hover:bg-gray-400 dark:bg-gray-600 dark:hover:bg-gray-500 text-gray-800 dark:text-gray-200 font-semibold py-2 px-4 rounded-lg transition-colors">
                 Close
             </button>
         </div>
     </div>
 
-    <!-- Pop-up Pending Transaksi -->
     <div id="pending-transaction" class="hidden fixed bottom-4 right-4 bg-gray-800 dark:bg-gray-700 text-white p-4 rounded-lg shadow-lg flex items-center space-x-2 max-w-xs">
       <svg class="animate-spin h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
