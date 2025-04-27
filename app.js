@@ -1,9 +1,10 @@
-const NFTAddress = "0xe5e3F56D06cC003B2d2f6eCdb89A2e9aDbB38056"; // Alamat kontrak NFT
-const LiquidityPoolAddress = "0x4FA264E6491b7ed420540f24021d89EedB340a76"; // Alamat kontrak Liquidity Pool (LP token)
-const StakingAddress = "0x6B67007e1C158caDAa4553A5B349051E3C6aEce9"; // Alamat kontrak Staking (Liquidity Pool)
-const StakingOSSAddress = "0x28774F2d350BAA80B098b8da0905dEACA9905b8a"; // Alamat kontrak StakingOSS yang bener
-const UsdtTokenAddress = "0x581711F99DaFf0db829B77b9c20b85C697d79b5E"; // Alamat kontrak USDT
-const MultiSenderAddress = "0x6B67007e1C158caDAa4553A5B349051E3C6aEce9"; // Alamat kontrak MultiSender
+const NFTAddress = "0xe5e3F56D06cC003B2d2f6eCdb89A2e9aDbB38056";
+const LiquidityPoolAddress = "0x4FA264E6491b7ed420540f24021d89EedB340a76";
+const StakingAddress = "0x6B67007e1C158caDAa4553A5B349051E3C6aEce9";
+const StakingOSSAddress = "0x28774F2d350BAA80B098b8da0905dEACA9905b8a";
+const UsdtTokenAddress = "0x581711F99DaFf0db829B77b9c20b85C697d79b5E";
+const MultiSenderAddress = "0x3202A3533fd45567a55Ce0ffC3A89e95b3c9A06E";
+const FaucetAddress = "0x6E13F11851231fa2A43Bbbe1037f5bf20cFFfe66";
 
 let provider;
 let signer;
@@ -14,6 +15,7 @@ let StakingContract;
 let StakingOSSContract;
 let UsdtTokenContract;
 let MultiSenderContract;
+let FaucetContract;
 
 const NFTABI = [
   "function balanceOf(address owner) view returns (uint256)",
@@ -47,36 +49,51 @@ const UsdtTokenABI = [
   "function balanceOf(address account) view returns (uint256)",
   "function allowance(address owner, address spender) view returns (uint256)",
   "function approve(address spender, uint256 amount) returns (bool)",
-  "function transferFrom(address sender, address recipient, uint256 amount) returns (bool)"
+  "function transferFrom(address sender, address recipient, uint256 amount) returns (bool)",
+  "function decimals() view returns (uint8)",
+  "function totalSupply() view returns (uint256)",
+  "function transfer(address recipient, uint256 amount) returns (bool)"
 ];
 
 const MultiSenderABI = [
-  "function multiSend(address token, address[] recipients, uint256[] amounts)",
   "function multiSendETH(address[] recipients, uint256[] amounts) payable"
 ];
 
-const DEFAULT_GAS_LIMIT = 500000;
+const FaucetABI = [
+  "function claim() external",
+  "function getNextClaimTime(address user) external view returns (uint256)",
+  "function getFaucetBalance() external view returns (uint256)"
+];
+
+const DEFAULT_GAS_LIMIT = 1000000;
 let recentTransactions = [];
 
-function showAlert(message, isError = true) {
-  const alert = document.getElementById("alert");
-  const alertMessage = document.getElementById("alert-message");
-  const alertIcon = document.getElementById("alert-icon");
-  alertMessage.innerHTML = message;
-  alertIcon.className = isError
-    ? "w-6 h-6 text-red-500"
-    : "w-6 h-6 text-green-500";
-  alertIcon.innerHTML = isError
-    ? `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 3c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>`
-    : `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>`;
-  alert.classList.remove("hidden");
+function showMessage(message, isError = true, txHash = null) {
+  const messagePopup = document.getElementById("message");
+  const messageTitle = document.getElementById("message-title");
+  const messageText = document.getElementById("message-text");
+  const messageIcon = document.getElementById("message-icon");
+
+  messageText.innerHTML = message;
+  if (isError) {
+    messageTitle.textContent = "Alert";
+    messageIcon.className = "w-6 h-6 text-red-500";
+    messageIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 3c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>`;
+  } else {
+    messageTitle.textContent = "Success";
+    messageIcon.className = "w-6 h-6 text-green-500";
+    messageIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>`;
+    if (txHash) {
+      messageText.innerHTML += `<br><a href="https://sepolia.tea.xyz/tx/${txHash}" target="_blank" rel="noopener noreferrer" class="text-blue-500 underline">View on Explorer</a>`;
+    }
+  }
+  messagePopup.classList.remove("hidden");
 }
 
-document.getElementById("close-alert").addEventListener("click", () => {
-  document.getElementById("alert").classList.add("hidden");
+document.getElementById("close-message").addEventListener("click", () => {
+  document.getElementById("message").classList.add("hidden");
 });
 
-// Fungsi buat pop-up pending transaksi
 function showPendingTransaction(title) {
   const pendingPopup = document.getElementById("pending-transaction");
   const pendingTitle = document.getElementById("pending-title");
@@ -132,7 +149,7 @@ document.getElementById("close-recent-tx").addEventListener("click", () => {
 });
 
 async function switchToTeaSepoliaNetwork() {
-  const TEA_SEPOLIA_CHAIN_ID = "0x27ea"; // Chain ID 10218 dalam hex
+  const TEA_SEPOLIA_CHAIN_ID = "0x27ea";
   const network = await provider.getNetwork();
   if (network.chainId !== 10218) {
     try {
@@ -169,6 +186,7 @@ async function initializeContracts() {
   StakingOSSContract = new ethers.Contract(StakingOSSAddress, StakingOSSABI, signer);
   UsdtTokenContract = new ethers.Contract(UsdtTokenAddress, UsdtTokenABI, signer);
   MultiSenderContract = new ethers.Contract(MultiSenderAddress, MultiSenderABI, signer);
+  FaucetContract = new ethers.Contract(FaucetAddress, FaucetABI, signer);
 }
 
 async function updateUIAfterConnect() {
@@ -180,6 +198,7 @@ async function updateUIAfterConnect() {
   await refreshNFTState();
   await refreshLiquidityPoolInfo();
   await refreshStakingOSSInfo();
+  await updateFaucetStatus();
 }
 
 async function connectWallet(walletType) {
@@ -208,7 +227,7 @@ async function connectWallet(walletType) {
     await updateUIAfterConnect();
   } catch (error) {
     console.error("Error connecting wallet:", error);
-    showAlert(`Failed to connect wallet: ${error.message}`);
+    showMessage(`Failed to connect wallet: ${error.message}`);
   }
 }
 
@@ -242,7 +261,7 @@ async function updateWalletInfo() {
 
 document.getElementById("copy-address").addEventListener("click", () => {
   navigator.clipboard.writeText(userAddress);
-  showAlert("Address Copied Successful", false);
+  showMessage("Address Copied Successfully", false);
 });
 
 document.getElementById("check-explorer").addEventListener("click", () => {
@@ -288,7 +307,7 @@ async function refreshNFTState() {
     }
   } catch (error) {
     console.error("Error refreshing NFT state:", error);
-    showAlert(`Failed to refresh NFT state: ${error.message}`);
+    showMessage(`Failed to refresh NFT state: ${error.message}`);
   }
 }
 
@@ -299,7 +318,7 @@ document.getElementById("mint-btn").addEventListener("click", async () => {
     showPendingTransaction("Mint NFT");
     const mintTx = await NFTContract.mintNFT(userAddress, { gasLimit: DEFAULT_GAS_LIMIT });
     await mintTx.wait();
-    showAlert("NFT Minted Successfully", false);
+    showMessage("NFT Minted Successfully", false, mintTx.hash);
     logAction("Mint NFT", { txHash: mintTx.hash });
     await refreshNFTState();
   } catch (error) {
@@ -310,7 +329,7 @@ document.getElementById("mint-btn").addEventListener("click", async () => {
     } else {
       errorMessage += error.message;
     }
-    showAlert(errorMessage);
+    showMessage(errorMessage);
   } finally {
     hidePendingTransaction();
   }
@@ -382,9 +401,9 @@ async function addLiquidity() {
 
     const allowance = await UsdtTokenContract.allowance(userAddress, LiquidityPoolAddress);
     if (allowance.lt(usdtAmount)) {
-      const approveTx = await UsdtTokenContract.approve(LiquidityPoolAddress, usdtAmount);
+      const approveTx = await UsdtTokenContract.approve(LiquidityPoolAddress, usdtAmount, { gasLimit: DEFAULT_GAS_LIMIT });
       await approveTx.wait();
-      showAlert("USDT Approved Successfully", false);
+      showMessage("USDT Approved Successfully", false, approveTx.hash);
     }
 
     try {
@@ -402,7 +421,7 @@ async function addLiquidity() {
       gasLimit: DEFAULT_GAS_LIMIT,
     });
     await tx.wait();
-    showAlert("Liquidity Added Successfully", false);
+    showMessage("Liquidity Added Successfully", false, tx.hash);
     logAction("Add Liquidity", {
       teaAmount: teaAmount.toString(),
       usdtAmount: usdtAmount.toString(),
@@ -411,7 +430,7 @@ async function addLiquidity() {
     await refreshLiquidityPoolInfo();
   } catch (error) {
     console.error("Error adding liquidity:", error);
-    showAlert(`Failed to add liquidity: ${error.message}`);
+    showMessage(`Failed to add liquidity: ${error.message}`);
   } finally {
     hidePendingTransaction();
     document.getElementById("add-liquidity").disabled = false;
@@ -452,12 +471,12 @@ async function removeLiquidity() {
       gasLimit: DEFAULT_GAS_LIMIT,
     });
     await tx.wait();
-    showAlert("Liquidity Removed Successfully", false);
+    showMessage("Liquidity Removed Successfully", false, tx.hash);
     logAction("Remove Liquidity", { liquidity: liquidity.toString(), txHash: tx.hash });
     await refreshLiquidityPoolInfo();
   } catch (error) {
     console.error("Error removing liquidity:", error);
-    showAlert(`Failed to remove liquidity: ${error.message}`);
+    showMessage(`Failed to remove liquidity: ${error.message}`);
   } finally {
     hidePendingTransaction();
     document.getElementById("remove-liquidity").disabled = false;
@@ -490,7 +509,7 @@ async function stakeLP() {
     if (allowance.lt(amount)) {
       const approveTx = await lpTokenContract.approve(StakingAddress, amount, { gasLimit: DEFAULT_GAS_LIMIT });
       await approveTx.wait();
-      showAlert("LP Token Approved Successfully", false);
+      showMessage("LP Token Approved Successfully", false, approveTx.hash);
     }
 
     try {
@@ -506,12 +525,12 @@ async function stakeLP() {
       gasLimit: DEFAULT_GAS_LIMIT,
     });
     await tx.wait();
-    showAlert("LP Tokens Staked Successfully", false);
+    showMessage("LP Tokens Staked Successfully", false, tx.hash);
     logAction("Stake LP Tokens", { amount: amount.toString(), txHash: tx.hash });
     await refreshLiquidityPoolInfo();
   } catch (error) {
     console.error("Error staking LP tokens:", error);
-    showAlert(`Failed to stake LP tokens: ${error.message}`);
+    showMessage(`Failed to stake LP tokens: ${error.message}`);
   } finally {
     hidePendingTransaction();
     document.getElementById("stake-lp").disabled = false;
@@ -552,12 +571,12 @@ async function unstakeLP() {
       gasLimit: DEFAULT_GAS_LIMIT,
     });
     await tx.wait();
-    showAlert("LP Tokens Unstaked Successfully", false);
+    showMessage("LP Tokens Unstaked Successfully", false, tx.hash);
     logAction("Unstake LP Tokens", { amount: amount.toString(), txHash: tx.hash });
     await refreshLiquidityPoolInfo();
   } catch (error) {
     console.error("Error unstaking LP tokens:", error);
-    showAlert(`Failed to unstake LP tokens: ${error.message}`);
+    showMessage(`Failed to unstake LP tokens: ${error.message}`);
   } finally {
     hidePendingTransaction();
     document.getElementById("unstake-lp").disabled = false;
@@ -596,163 +615,129 @@ async function refreshLiquidityPoolInfo() {
     document.getElementById("user-pending-rewards").textContent = `Pending Rewards: ${ethers.utils.formatEther(pendingRewards)} TEA`;
   } catch (error) {
     console.error("Error refreshing liquidity pool info:", error);
-    showAlert(`Failed to refresh liquidity pool info: ${error.message}`);
+    showMessage(`Failed to refresh liquidity pool info: ${error.message}`);
   }
 }
 
-async function multiSend() {
-  try {
-    const tokenAddress = document.getElementById("token-address").value;
-    const addressesInput = document.getElementById("addresses").value;
-    const amountsInput = document.getElementById("amounts").value;
-    const sendButton = document.getElementById("multi-send-btn");
-    sendButton.disabled = true;
+// Update preview for multi-sender
+const addressesInput = document.getElementById('addresses');
+if (addressesInput) {
+  addressesInput.addEventListener('input', () => {
+    const value = addressesInput.value;
+    const amountsInput = document.getElementById('amounts');
+    const preview = document.getElementById('multi-send-preview');
+    if (amountsInput && preview) {
+      const addresses = value.split('\n').map(addr => addr.trim()).filter(addr => addr !== '');
+      const amountsValue = amountsInput.value.trim();
+      let amounts = amountsValue.split(',').map(a => a.trim());
+      
+      if (amounts.length === 1 && addresses.length > 1) {
+        amounts = Array(addresses.length).fill(amounts[0]);
+      }
+      
+      if (addresses.length > 0) {
+        preview.textContent = `Sending to ${addresses.length} addresses: ${amounts.join(', ')} TEA each.`;
+      } else {
+        preview.textContent = '';
+      }
+    }
+  });
+}
 
-    const addresses = addressesInput.split("\n").map(addr => addr.trim()).filter(addr => addr);
-    const amountsArray = amountsInput.split(",").map(amount => amount.trim()).filter(amount => amount);
+// Fungsi untuk fix checksum alamat
+function fixAddressChecksum(address) {
+  try {
+    const lowerCaseAddress = address.toLowerCase();
+    return ethers.utils.getAddress(lowerCaseAddress);
+  } catch (error) {
+    throw new Error(`Invalid address: ${address}. Please ensure it's a valid Ethereum address.`);
+  }
+}
+
+// Validate and execute multi-send (khusus TEA)
+async function multiSend() {
+  const addressesInput = document.getElementById("addresses");
+  const amountsInput = document.getElementById("amounts");
+  const multiSendBtn = document.getElementById("multi-send-btn");
+  const multiSendError = document.getElementById("multi-send-error");
+
+  try {
+    multiSendBtn.disabled = true;
+    multiSendError.classList.add("hidden");
+
+    let addresses = addressesInput.value.split('\n').map(addr => addr.trim()).filter(addr => addr !== '');
+    const amountsValue = amountsInput.value.trim();
+    let amounts = amountsValue.split(',').map(a => parseFloat(a.trim()));
+
+    if (amounts.length === 1 && addresses.length > 1) {
+      amounts = Array(addresses.length).fill(amounts[0]);
+    }
+
+    addresses = addresses.map(addr => fixAddressChecksum(addr));
 
     if (addresses.length === 0) {
-      throw new Error("At least one recipient address is required.");
+      throw new Error("Please provide at least one recipient address.");
     }
 
-    let amounts;
-    if (amountsArray.length === 1) {
-      amounts = Array(addresses.length).fill(amountsArray[0]);
-    } else if (amountsArray.length === addresses.length) {
-      amounts = amountsArray;
-    } else {
-      throw new Error("Number of amounts must match number of addresses or be a single amount.");
+    if (addresses.length !== amounts.length) {
+      throw new Error("Number of addresses and amounts must match, or provide a single amount for all.");
     }
 
-    const parsedAmounts = amounts.map(amount => {
-      const amountFloat = parseFloat(amount);
-      if (isNaN(amountFloat) || amountFloat <= 0) {
-        throw new Error("All amounts must be greater than 0.");
+    for (const addr of addresses) {
+      if (!ethers.utils.isAddress(addr)) {
+        throw new Error(`Invalid address: ${addr}`);
       }
-      return ethers.utils.parseEther(amount);
-    });
+    }
 
-    const isETH = tokenAddress.toLowerCase() === "0x0000000000000000000000000000000000000000";
+    for (const amount of amounts) {
+      if (isNaN(amount) || amount <= 0) {
+        throw new Error("All amounts must be valid numbers greater than 0.");
+      }
+    }
+
+    showPendingTransaction("Multi Send TEA");
+
+    const parsedAmounts = amounts.map(amount => ethers.utils.parseEther(amount.toString()));
     const totalAmount = parsedAmounts.reduce((sum, amount) => sum.add(amount), ethers.BigNumber.from(0));
 
-    showPendingTransaction("Multi Send");
+    const ethBalance = await provider.getBalance(userAddress);
+    console.log(`User TEA balance: ${ethers.utils.formatEther(ethBalance)} TEA`);
+    if (ethBalance.lt(totalAmount)) {
+      throw new Error("Insufficient TEA balance.");
+    }
 
-    if (isETH) {
-      const ethBalance = await provider.getBalance(userAddress);
-      if (ethBalance.lt(totalAmount)) {
-        throw new Error("Insufficient TEA balance.");
-      }
+    console.log(`Calling multiSendETH with:`);
+    console.log(`Recipients: ${addresses}`);
+    console.log(`Amounts: ${parsedAmounts.map(a => ethers.utils.formatEther(a)).join(', ')} TEA`);
+    console.log(`Total value: ${ethers.utils.formatEther(totalAmount)} TEA`);
 
-      try {
-        await MultiSenderContract.estimateGas.multiSendETH(addresses, parsedAmounts, {
-          value: totalAmount,
-          gasLimit: DEFAULT_GAS_LIMIT,
-        });
-      } catch (gasError) {
-        console.error("Gas estimation failed:", gasError);
-        throw new Error(`Gas estimation failed: ${gasError.message}. The transaction might fail due to insufficient gas or contract issues.`);
-      }
-
-      const tx = await MultiSenderContract.multiSendETH(addresses, parsedAmounts, {
+    try {
+      await MultiSenderContract.estimateGas.multiSendETH(addresses, parsedAmounts, {
         value: totalAmount,
         gasLimit: DEFAULT_GAS_LIMIT,
       });
-      await tx.wait();
-      showAlert("TEA Sent Successfully", false);
-      logAction("Multi Send TEA", { token: "TEA", addresses, amounts, txHash: tx.hash });
-    } else {
-      // Validasi alamat token
-      if (!ethers.utils.isAddress(tokenAddress)) {
-        throw new Error("Invalid token address.");
-      }
-
-      // Cek apakah alamat token adalah kontrak yang valid
-      const code = await provider.getCode(tokenAddress);
-      if (code === "0x") {
-        throw new Error("Token address is not a valid contract.");
-      }
-
-      const tokenContract = new ethers.Contract(tokenAddress, UsdtTokenABI, signer);
-
-      // Cek apakah kontrak support fungsi balanceOf (basic ERC20 check)
-      let balance;
-      try {
-        balance = await tokenContract.balanceOf(userAddress);
-        console.log(`Token balance for ${userAddress}: ${ethers.utils.formatEther(balance)}`);
-      } catch (error) {
-        console.error("Error checking balanceOf:", error);
-        throw new Error("Token contract does not support ERC20 standard (balanceOf failed).");
-      }
-
-      if (balance.lt(totalAmount)) {
-        throw new Error(`Insufficient token balance. Required: ${ethers.utils.formatEther(totalAmount)}, Available: ${ethers.utils.formatEther(balance)}`);
-      }
-
-      // Cek allowance
-      let allowance;
-      try {
-        allowance = await tokenContract.allowance(userAddress, MultiSenderAddress);
-        console.log(`Allowance for MultiSender (${MultiSenderAddress}): ${ethers.utils.formatEther(allowance)}`);
-      } catch (error) {
-        console.error("Error checking allowance:", error);
-        throw new Error("Failed to check allowance. Token might not support ERC20 standard.");
-      }
-
-      if (allowance.lt(totalAmount)) {
-        console.log(`Approving ${ethers.utils.formatEther(totalAmount)} tokens for MultiSender...`);
-        const approveTx = await tokenContract.approve(MultiSenderAddress, totalAmount, { gasLimit: DEFAULT_GAS_LIMIT });
-        await approveTx.wait();
-        console.log("Approval successful, tx hash:", approveTx.hash);
-
-        // Cek ulang allowance setelah approve
-        allowance = await tokenContract.allowance(userAddress, MultiSenderAddress);
-        console.log(`Updated allowance: ${ethers.utils.formatEther(allowance)}`);
-        if (allowance.lt(totalAmount)) {
-          throw new Error(`Allowance still insufficient after approval. Required: ${ethers.utils.formatEther(totalAmount)}, Approved: ${ethers.utils.formatEther(allowance)}`);
-        }
-        showAlert("Token Approved Successfully", false);
-      }
-
-      // Cek apakah transferFrom bisa jalan (simulasi kecil)
-      try {
-        await tokenContract.estimateGas.transferFrom(userAddress, MultiSenderAddress, totalAmount);
-        console.log("transferFrom simulation successful.");
-      } catch (error) {
-        console.error("transferFrom simulation failed:", error);
-        throw new Error("Token transferFrom simulation failed. Ensure the token contract supports ERC20 standard and allowance is sufficient.");
-      }
-
-      try {
-        await MultiSenderContract.estimateGas.multiSend(tokenAddress, addresses, parsedAmounts, {
-          gasLimit: DEFAULT_GAS_LIMIT,
-        });
-        console.log("multiSend gas estimation successful.");
-      } catch (gasError) {
-        console.error("Gas estimation failed for multiSend:", gasError);
-        let errorMessage = "Gas estimation failed: The transaction might fail.";
-        if (gasError.reason) {
-          errorMessage += ` Reason: ${gasError.reason}`;
-        } else if (gasError.message.includes("revert")) {
-          errorMessage += " Possible issues: insufficient allowance, token contract issues, or MultiSender contract logic error.";
-        }
-        throw new Error(errorMessage);
-      }
-
-      const tx = await MultiSenderContract.multiSend(tokenAddress, addresses, parsedAmounts, {
-        gasLimit: DEFAULT_GAS_LIMIT,
-      });
-      await tx.wait();
-      showAlert("Tokens Sent Successfully", false);
-      logAction("Multi Send Tokens", { token: tokenAddress, addresses, amounts, txHash: tx.hash });
+      console.log("multiSendETH gas estimation successful.");
+    } catch (gasError) {
+      console.error("Gas estimation failed:", gasError);
+      throw new Error(`Gas estimation failed: ${gasError.message}`);
     }
 
+    const tx = await MultiSenderContract.multiSendETH(addresses, parsedAmounts, {
+      value: totalAmount,
+      gasLimit: DEFAULT_GAS_LIMIT,
+    });
+    await tx.wait();
+    showMessage("Multi Send TEA Successful", false, tx.hash);
+    logAction("Multi Send TEA", { recipients: addresses, amounts: parsedAmounts.map(a => a.toString()), txHash: tx.hash });
     await updateWalletInfo();
   } catch (error) {
     console.error("Error in multi-send:", error);
-    showAlert(`Failed to send tokens: ${error.message}`);
+    multiSendError.textContent = error.message;
+    multiSendError.classList.remove("hidden");
+    showMessage(`Failed to multi-send TEA: ${error.message}`);
   } finally {
     hidePendingTransaction();
-    document.getElementById("multi-send-btn").disabled = false;
+    multiSendBtn.disabled = false;
   }
 }
 
@@ -769,18 +754,13 @@ async function stakeTEA() {
       throw new Error("Please enter a valid TEA amount greater than 0.");
     }
 
-    const amount = ethers.utils.parseEther(amountInput.toString());
-    const MAX_UINT256 = ethers.BigNumber.from("115792089237316195423570985008687907853269984665640564039457584007913129639935");
-    if (amount.gt(MAX_UINT256)) {
-      throw new Error("TEA amount is too large. Please enter a smaller value.");
-    }
-
-    showPendingTransaction("Stake TEA");
-
+    const amount = ethers.utils.parseEther(amountInput);
     const teaBalance = await provider.getBalance(userAddress);
     if (teaBalance.lt(amount)) {
       throw new Error("Insufficient TEA balance.");
     }
+
+    showPendingTransaction("Stake TEA");
 
     try {
       await StakingOSSContract.estimateGas.stake({
@@ -789,11 +769,7 @@ async function stakeTEA() {
       });
     } catch (gasError) {
       console.error("Gas estimation failed:", gasError);
-      let errorMessage = "Failed to estimate gas. The transaction might revert.";
-      if (gasError.reason) {
-        errorMessage += ` Reason: ${gasError.reason}`;
-      }
-      throw new Error(errorMessage);
+      throw new Error(`Gas estimation failed: ${gasError.message}`);
     }
 
     const tx = await StakingOSSContract.stake({
@@ -801,12 +777,12 @@ async function stakeTEA() {
       gasLimit: DEFAULT_GAS_LIMIT,
     });
     await tx.wait();
-    showAlert("TEA Staked Successfully", false);
+    showMessage("TEA Staked Successfully", false, tx.hash);
     logAction("Stake TEA", { amount: amount.toString(), txHash: tx.hash });
     await refreshStakingOSSInfo();
   } catch (error) {
     console.error("Error staking TEA:", error);
-    showAlert(`Failed to stake TEA: ${error.message}`);
+    showMessage(`Failed to stake TEA: ${error.message}`);
   } finally {
     hidePendingTransaction();
     document.getElementById("stake-tea").disabled = false;
@@ -847,12 +823,12 @@ async function unstakeTEA() {
       gasLimit: DEFAULT_GAS_LIMIT,
     });
     await tx.wait();
-    showAlert("TEA Unstaked Successfully", false);
+    showMessage("TEA Unstaked Successfully", false, tx.hash);
     logAction("Unstake TEA", { amount: amount.toString(), txHash: tx.hash });
     await refreshStakingOSSInfo();
   } catch (error) {
     console.error("Error unstaking TEA:", error);
-    showAlert(`Failed to unstake TEA: ${error.message}`);
+    showMessage(`Failed to unstake TEA: ${error.message}`);
   } finally {
     hidePendingTransaction();
     document.getElementById("unstake-tea").disabled = false;
@@ -881,12 +857,12 @@ async function withdrawTEA() {
       gasLimit: DEFAULT_GAS_LIMIT,
     });
     await tx.wait();
-    showAlert("TEA Withdrawn Successfully", false);
+    showMessage("TEA Withdrawn Successfully", false, tx.hash);
     logAction("Withdraw TEA", { txHash: tx.hash });
     await refreshStakingOSSInfo();
   } catch (error) {
     console.error("Error withdrawing TEA:", error);
-    showAlert(`Failed to withdraw TEA: ${error.message}`);
+    showMessage(`Failed to withdraw TEA: ${error.message}`);
   } finally {
     hidePendingTransaction();
     document.getElementById("withdraw-tea").disabled = false;
@@ -900,33 +876,144 @@ async function refreshStakingOSSInfo() {
     const userStaked = await StakingOSSContract.getStake(userAddress);
     document.getElementById("user-staked-tea").textContent = `Staked TEA Balance: ${ethers.utils.formatEther(userStaked)} TEA`;
   } catch (error) {
-    console.error("Error refreshing staking TEA info:", error);
-    showAlert(`Failed to refresh staking TEA info: ${error.message}`);
+    console.error("Error refreshing staking OSS info:", error);
+    showMessage(`Failed to refresh staking info: ${error.message}`);
   }
 }
 
 document.getElementById("refresh-staking-tea-btn").addEventListener("click", refreshStakingOSSInfo);
 
 async function refreshCheckerTEA() {
-  try {
-    const checkerAddressInput = document.getElementById("checker-address").value;
-    const checkButton = document.getElementById("check-tea-btn");
-    checkButton.disabled = true;
+  const checkerResult = document.getElementById("checker-result");
+  checkerResult.innerHTML = "";
 
-    if (!ethers.utils.isAddress(checkerAddressInput)) {
-      throw new Error("Please enter a valid Ethereum address.");
-    }
-
-    const teaBalance = await provider.getBalance(checkerAddressInput);
-    const usdtBalance = await UsdtTokenContract.balanceOf(checkerAddressInput);
-
-    document.getElementById("checker-result").textContent = `TEA Balance: ${ethers.utils.formatEther(teaBalance)} TEA\nUSDT Balance: ${ethers.utils.formatUnits(usdtBalance, 18)} USDT`;
-  } catch (error) {
-    console.error("Error checking TEA balance:", error);
-    showAlert(`Failed to check TEA balance: ${error.message}`);
-  } finally {
-    document.getElementById("check-tea-btn").disabled = false;
+  if (!userAddress) {
+    checkerResult.textContent = "Please connect your wallet first.";
+    return;
   }
+
+  const activities = [
+    { name: "Deploy NFT", action: "Mint NFT" },
+    { name: "Deploy Token", action: "Deploy Token" }, // Placeholder, karena belum ada fungsi deploy token
+    { name: "Add Liquidity", action: "Add Liquidity" },
+    { name: "Remove Liquidity", action: "Remove Liquidity" },
+    { name: "Stake LP Token", action: "Stake LP Tokens" },
+    { name: "Unstake LP Token", action: "Unstake LP Tokens" },
+    { name: "Stake TEA", action: "Stake TEA" },
+    { name: "Unstake TEA", action: "Unstake TEA" },
+  ];
+
+  let tableHTML = `
+    <table class="min-w-full bg-white border border-gray-200">
+      <thead>
+        <tr>
+          <th class="py-2 px-4 border-b text-left">Activity</th>
+          <th class="py-2 px-4 border-b text-left">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+  activities.forEach(activity => {
+    const hasDone = recentTransactions.some(tx => tx.action === activity.action && tx.from.toLowerCase() === userAddress.toLowerCase());
+    const status = hasDone ? "✔" : "✘";
+    const statusColor = hasDone ? "text-green-500" : "text-red-500";
+    tableHTML += `
+      <tr>
+        <td class="py-2 px-4 border-b">${activity.name}</td>
+        <td class="py-2 px-4 border-b ${statusColor}">${status}</td>
+      </tr>
+    `;
+  });
+
+  tableHTML += `
+      </tbody>
+    </table>
+  `;
+
+  checkerResult.innerHTML = tableHTML;
 }
 
 document.getElementById("check-tea-btn").addEventListener("click", refreshCheckerTEA);
+
+// Faucet Functionality
+async function updateFaucetStatus() {
+  const faucetStatus = document.getElementById("faucet-status");
+  const claimButton = document.getElementById("claim-faucet");
+
+  try {
+    const nextClaimTime = await FaucetContract.getNextClaimTime(userAddress);
+    const currentTime = Math.floor(Date.now() / 1000); // Waktu dalam detik
+
+    if (nextClaimTime.toNumber() > currentTime) {
+      const timeLeft = nextClaimTime.toNumber() - currentTime;
+      const hoursLeft = Math.floor(timeLeft / 3600);
+      const minutesLeft = Math.floor((timeLeft % 3600) / 60);
+      faucetStatus.textContent = `You can claim again in ${hoursLeft}h ${minutesLeft}m.`;
+      claimButton.disabled = true;
+    } else {
+      const faucetBalance = await FaucetContract.getFaucetBalance();
+      const claimAmount = ethers.utils.parseUnits("1000", 18);
+      if (faucetBalance.lt(claimAmount)) {
+        faucetStatus.textContent = "Faucet has insufficient USDT.";
+        claimButton.disabled = true;
+      } else {
+        faucetStatus.textContent = "You can claim 1000 USDT now.";
+        claimButton.disabled = false;
+      }
+    }
+  } catch (error) {
+    console.error("Error updating faucet status:", error);
+    faucetStatus.textContent = "Error checking faucet status.";
+    claimButton.disabled = true;
+  }
+}
+
+async function claimFaucet() {
+  try {
+    const claimButton = document.getElementById("claim-faucet");
+    claimButton.disabled = true;
+
+    showPendingTransaction("Claim Faucet");
+
+    try {
+      await FaucetContract.estimateGas.claim({
+        gasLimit: DEFAULT_GAS_LIMIT,
+      });
+    } catch (gasError) {
+      console.error("Gas estimation failed:", gasError);
+      throw new Error(`Gas estimation failed: ${gasError.message}`);
+    }
+
+    const tx = await FaucetContract.claim({
+      gasLimit: DEFAULT_GAS_LIMIT,
+    });
+    await tx.wait();
+
+    showMessage("Successfully claimed 1000 USDT", false, tx.hash);
+    logAction("Claim Faucet", { amount: "1000 USDT", txHash: tx.hash });
+    await updateWalletInfo();
+    await updateFaucetStatus();
+  } catch (error) {
+    console.error("Error claiming faucet:", error);
+    showMessage(`Failed to claim faucet: ${error.message}`);
+  } finally {
+    hidePendingTransaction();
+    document.getElementById("claim-faucet").disabled = false;
+    await updateFaucetStatus(); // Pastikan status diperbarui setelah claim
+  }
+}
+
+document.getElementById("faucet-btn").addEventListener("click", () => {
+  if (!userAddress) {
+    showMessage("Please connect your wallet first.");
+    return;
+  }
+  document.getElementById("faucet-modal").classList.remove("hidden");
+});
+
+document.getElementById("claim-faucet").addEventListener("click", claimFaucet);
+
+document.getElementById("faucet-close").addEventListener("click", () => {
+  document.getElementById("faucet-modal").classList.add("hidden");
+});
