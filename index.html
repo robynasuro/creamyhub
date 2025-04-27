@@ -8,15 +8,6 @@
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-      #alert-message a {
-        display: inline-block;
-        margin-top: 0.5rem;
-        color: #3b82f6 !important; /* Tailwind blue-500 */
-        text-decoration: underline;
-      }
-      #alert-message a:hover {
-        color: #2563eb !important; /* Tailwind blue-600 */
-      }
       body {
         font-family: 'Lexend', sans-serif;
         background-color: #f0f0f0;
@@ -51,41 +42,24 @@
         color: #e2e8f0;
         border-color: #718096;
       }
-      body.dark .checker-table {
-        border-color: #718096;
+      body.dark #wallet-choice-modal .bg-white,
+      body.dark #recent-tx-modal .bg-white {
+        background-color: #2d3748;
+        color: #e2e8f0;
       }
-      body.dark .checker-table th,
-      body.dark .checker-table td {
-        border-color: #718096;
+      body.dark #wallet-choice-modal h2,
+      body.dark #recent-tx-modal h2 {
+        color: #e2e8f0;
       }
-      body.dark .checker-table thead tr {
-        background-color: #4a5568;
+      body.dark #recent-tx-modal p {
+        color: #a0aec0;
       }
       .hidden {
-        display: none;
+        display: none !important;
       }
-      .tab.active {
-        background-color: #4CAF50;
-        color: white;
-      }
-      .checker-table th, .checker-table td {
-        padding: 0.5rem;
-        text-align: center;
-      }
-      .tab-container {
-        background-color: #1a202c;
-        padding: 0.5rem;
-        border-radius: 0.5rem 0.5rem 0 0;
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 1rem;
-        overflow-x: auto;
-        scrollbar-width: none;
-        -ms-overflow-style: none;
-        position: relative;
-      }
-      .tab-container::-webkit-scrollbar {
-        display: none;
+      #connect-okx {
+        display: block !important;
+        visibility: visible !important;
       }
       .tab {
         flex: 1;
@@ -101,6 +75,26 @@
       }
       .tab:hover {
         background-color: #2d3748;
+      }
+      .tab.active {
+        border-b-2;
+        border-blue-500;
+        background-color: #4a5568;
+      }
+      .tab-container {
+        background-color: #1a202c;
+        padding: 0.5rem;
+        border-radius: 0.5rem 0.5rem 0 0;
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+        overflow-x: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        position: relative;
+      }
+      .tab-container::-webkit-scrollbar {
+        display: none;
       }
       .tab-container::after {
         content: '';
@@ -245,10 +239,58 @@
       .tab-content:not(.hidden) {
         display: block !important;
       }
+      #wallet-info .wallet-card {
+        background-color: #f9fafb;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+      body.dark #wallet-info .wallet-card {
+        background-color: #2d3748;
+      }
+      #wallet-info p {
+        margin-bottom: 0.5rem;
+        font-size: 0.875rem;
+      }
+      #wallet-info p#wallet-address {
+        font-weight: 600;
+        color: #1f2937;
+      }
+      body.dark #wallet-info p#wallet-address {
+        color: #e2e8f0;
+      }
+      #wallet-info p#tea-balance {
+        color: #4CAF50;
+        font-weight: 500;
+      }
+      #alert-message a {
+        color: #3b82f6;
+        text-decoration: underline;
+        transition: color 0.3s;
+      }
+      #alert-message a:hover {
+        color: #2563eb;
+      }
+      .view-explorer {
+        color: #3b82f6;
+        text-decoration: underline;
+        font-weight: 500;
+        transition: color 0.3s;
+      }
+      .view-explorer:hover {
+        color: #2563eb;
+      }
+      /* CSS untuk pop-up pending transaksi */
+      .animate-spin {
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
     </style>
 </head>
 <body class="h-screen bg-gray-100 flex flex-col items-center p-4 gap-4">
-    <!-- Animasi Daun Teh -->
     <div class="tea-leaves-container">
         <div class="tea-leaf"></div>
         <div class="tea-leaf"></div>
@@ -260,33 +302,34 @@
         <div class="tea-leaf"></div>
     </div>
 
-    <!-- Navbar -->
     <nav class="w-full bg-white rounded-lg shadow-lg p-4 flex items-center justify-between">
         <div class="text-xl font-bold text-gray-800">CreamyHub</div>
         <div class="flex items-center gap-2">
             <div class="text-sm text-gray-600">Tea Sepolia Tools</div>
             <div class="toggle-container">
                 <label class="toggle-switch">
-                    <input type="checkbox" id="theme-toggle">
+                    <input type="checkbox" id="theme-toggle" aria-label="Toggle Dark Mode">
                     <span class="slider"></span>
                 </label>
             </div>
         </div>
     </nav>
 
-    <!-- Main Section -->
     <div id="main-section" class="flex-1 w-full max-w-3xl bg-white rounded-lg shadow-lg p-4 flex flex-col justify-center">
-        <!-- Connect Wallet Button (shown if not connected) -->
         <div id="connect-wallet-section" class="">
             <h1 class="text-2xl font-bold text-center text-gray-800 mb-4">Connect Your Wallet</h1>
-            <button id="connect-btn" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+            <button id="connect-wallet" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
                 Connect Wallet
             </button>
         </div>
 
-        <!-- Wallet Info (shown after connecting) -->
         <div id="wallet-info" class="hidden mb-4 border-b border-gray-200 pb-4">
-            <p id="wallet-address" class="text-center text-gray-700 break-all font-semibold"></p>
+            <div class="wallet-card">
+                <p id="wallet-address" class="text-center break-all"></p>
+                <p id="usdt-balance" class="text-center text-gray-700"></p>
+                <p id="tea-balance" class="text-center"></p>
+                <p id="network" class="text-center text-gray-700"></p>
+            </div>
             <div class="flex justify-center gap-2 mt-4 flex-wrap">
                 <button id="copy-address" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-1 px-3 rounded-lg transition-colors">
                     Copy Address
@@ -295,7 +338,7 @@
                     Check on Explorer
                 </button>
                 <button id="recent-tx-btn" class="bg-purple-500 hover:bg-purple-600 text-white font-semibold py-1 px-3 rounded-lg transition-colors">
-                    Recent Transaction
+                    Recent Transactions
                 </button>
                 <button id="disconnect-wallet" class="bg-red-500 hover:bg-red-600 text-white font-semibold py-1 px-3 rounded-lg transition-colors">
                     Disconnect
@@ -303,133 +346,131 @@
             </div>
         </div>
 
-        <!-- Tabs -->
         <div id="tabs-section" class="hidden">
-            <div class="tab-container">
+            <div class="tab-container" id="tab-container">
                 <button class="tab active" data-tab="mint-nft">Mint NFT</button>
                 <button class="tab" data-tab="liquidity-pool">Liquidity Pool</button>
-                <button class="tab" data-tab="deploy-token">Deploy Token</button>
                 <button class="tab" data-tab="multi-sender">Multi Sender</button>
-                <button class="tab" data-tab="checker-tea">Checker TEA</button>
                 <button class="tab" data-tab="staking-oss">Staking TEA</button>
+                <button class="tab" data-tab="checker-tea">Checker TEA</button>
             </div>
             <div id="scroll-hint" class="scroll-hint">Swipe to see more</div>
 
-            <!-- Tab Contents -->
-            <!-- Mint NFT -->
             <div id="mint-nft" class="tab-content p-4 border border-gray-200 rounded-lg">
                 <h2 class="text-xl font-semibold text-gray-800 mb-2">Mint NFT</h2>
-                <p class="text-gray-600 mb-4">Create and mint your own NFT on the Tea Sepolia network.</p>
-                <input id="recipient-address" type="text" placeholder="Recipient Address" class="w-full p-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <p class="text-gray-600 mb-4">Mint an NFT to your connected wallet on the Tea Sepolia network.</p>
+                <div class="mb-4">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">Your NFTs</h3>
+                    <ul id="user-nfts" class="list-disc pl-5 text-gray-600 mb-4"></ul>
+                </div>
+                <button id="refresh-nft-state" class="w-full bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors mb-4">
+                    Refresh NFT State
+                </button>
                 <button id="mint-btn" class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
                     Mint NFT
                 </button>
             </div>
 
-            <!-- Liquidity Pool -->
             <div id="liquidity-pool" class="tab-content hidden p-4 border border-gray-200 rounded-lg">
-                <!-- Add Liquidity -->
                 <div class="mb-6">
                     <h2 class="text-xl font-semibold text-gray-800 mb-2">Add Liquidity</h2>
-                    <p class="text-gray-600 mb-4">Add liquidity to the TEA/ETH pool and receive LP tokens.</p>
-                    <input id="tea-amount" type="text" placeholder="Amount of TEA" class="w-full p-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <input id="eth-amount" type="text" placeholder="Amount of ETH" class="w-full p-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <button id="add-liquidity-btn" class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
-                        Approve ETH
+                    <p class="text-gray-600 mb-4">Add liquidity to the TEA/USDT pool and receive LP tokens.</p>
+                    <input id="tea-amount" type="text" placeholder="Amount of TEA (e.g., 1)" class="w-full p-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <p id="required-usdt" class="text-gray-600 mb-2">Required USDT: 0 (based on pool ratio)</p>
+                    <input id="usdt-amount" type="text" placeholder="Amount of USDT (e.g., 1000)" class="w-full p-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <input id="slippage-tolerance" type="text" placeholder="Slippage Tolerance (%) (e.g., 1)" value="1" class="w-full p-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <div id="liquidity-error" class="text-red-500 mt-2 hidden"></div>
+                    <button id="add-liquidity" class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+                        Add Liquidity
                     </button>
                 </div>
 
-                <!-- Remove Liquidity -->
                 <div class="mb-6">
                     <h2 class="text-xl font-semibold text-gray-800 mb-2">Remove Liquidity</h2>
-                    <p class="text-gray-600 mb-4">Remove liquidity from the TEA/ETH pool and burn your LP tokens.</p>
+                    <p class="text-gray-600 mb-4">Remove liquidity from the TEA/USDT pool and burn your LP tokens. Slippage is set to 1%.</p>
                     <input id="liquidity-amount" type="text" placeholder="Amount of LP Tokens" class="w-full p-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <button id="remove-liquidity-btn" class="w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+                    <button id="remove-liquidity" class="w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
                         Remove Liquidity
                     </button>
                 </div>
 
-                <!-- Stake LP Tokens -->
                 <div class="mb-6">
                     <h2 class="text-xl font-semibold text-gray-800 mb-2">Stake LP Tokens</h2>
                     <p class="text-gray-600 mb-4">Stake your LP tokens to earn TEA rewards.</p>
                     <input id="stake-lp-amount" type="text" placeholder="Amount of LP Tokens to Stake" class="w-full p-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <div id="stake-lp-error" class="text-red-500 mt-2 hidden"></div>
                     <input id="unstake-lp-amount" type="text" placeholder="Amount of LP Tokens to Unstake" class="w-full p-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <div id="unstake-lp-error" class="text-red-500 mt-2 hidden"></div>
                     <div class="flex flex-col sm:flex-row gap-2">
-                        <button id="stake-lp-btn" class="flex-1 bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+                        <button id="stake-lp" class="flex-1 bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
                             Stake LP Tokens
                         </button>
-                        <button id="unstake-lp-btn" class="flex-1 bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+                        <button id="unstake-lp" class="flex-1 bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
                             Unstake LP Tokens
                         </button>
                     </div>
                 </div>
 
-                <!-- Liquidity Pool Info -->
                 <div>
                     <h2 class="text-xl font-semibold text-gray-800 mb-2">Liquidity Pool Info</h2>
-                    <p id="lp-balance" class="text-gray-600 mb-2">LP Balance: 0 LP</p>
-                    <p id="staked-lp-balance" class="text-gray-600 mb-2">Staked LP Balance: 0 LP</p>
-                    <p id="lp-reward" class="text-gray-600 mb-2">LP Reward: 0 TEA</p>
+                    <p id="pool-tea-reserve" class="text-gray-600 mb-2">TEA Reserve: 0 TEA</p>
+                    <p id="pool-eth-reserve" class="text-gray-600 mb-2">USDT Reserve: 0 USDT</p>
+                    <p id="total-liquidity" class="text-gray-600 mb-2">Total Liquidity: 0 LP Tokens</p>
+                    <p id="user-liquidity" class="text-gray-600 mb-2">Your Liquidity: 0 LP Tokens</p>
+                    <p id="user-staked-lp" class="text-gray-600 mb-2">Staked LP Balance: 0 LP Tokens</p>
+                    <p id="user-pending-rewards" class="text-gray-600 mb-2">Pending Rewards: 0 TEA</p>
                 </div>
             </div>
 
-            <!-- Deploy Token -->
-            <div id="deploy-token" class="tab-content hidden p-4 border border-gray-200 rounded-lg">
-                <h2 class="text-xl font-semibold text-gray-800 mb-2">Deploy Token</h2>
-                <p class="text-gray-600 mb-4">Deploy a new token contract with a custom name and symbol.</p>
-                <input id="token-name" type="text" placeholder="Token Name" class="w-full p-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <input id="token-symbol" type="text" placeholder="Token Symbol" class="w-full p-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <button id="deploy-token-btn" class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
-                    Deploy Token
-                </button>
-            </div>
-
-            <!-- Multi Sender -->
             <div id="multi-sender" class="tab-content hidden p-4 border border-gray-200 rounded-lg">
                 <h2 class="text-xl font-semibold text-gray-800 mb-2">Multi Sender</h2>
-                <p class="text-gray-600 mb-4">Send tokens to multiple addresses in one transaction.</p>
-                <input id="token-address" type="text" placeholder="Token Address" class="w-full p-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <textarea id="addresses" placeholder="Recipient Addresses (comma separated)" class="w-full p-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 h-32"></textarea>
-                <input id="amounts" type="text" placeholder="Amounts (comma separated)" class="w-full p-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <p class="text-gray-600 mb-4">Send tokens to multiple addresses in one transaction. Use a single amount for all addresses or match amounts to addresses.</p>
+                <input id="token-address" type="text" placeholder="Token Address (e.g., 0x123...)" class="w-full p-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <textarea id="addresses" placeholder="Recipient Addresses, one per line (e.g.:\n0x123...\n0x456...)" class="w-full p-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 h-32"></textarea>
+                <input id="amounts" type="text" placeholder="Amounts, comma separated or single amount (e.g., 2 or 2,2,2)" class="w-full p-2 mb-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <div id="multi-send-preview" class="text-gray-700 mt-2 mb-2"></div>
+                <div id="multi-send-error" class="text-red-500 mt-2 hidden"></div>
                 <button id="multi-send-btn" class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
                     Send Tokens
                 </button>
             </div>
 
-            <!-- Checker TEA -->
-            <div id="checker-tea" class="tab-content hidden p-4 border border-gray-200 rounded-lg">
-                <h2 class="text-xl font-semibold text-gray-800 mb-2">Checker TEA</h2>
-                <p class="text-gray-600 mb-4">Check the status of your wallet's activities on Tea Sepolia.</p>
-                <input id="checker-address" type="text" placeholder="Wallet Address" class="w-full p-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <button id="checker-btn" class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors mb-4">
-                    Check
-                </button>
-                <pre id="checker-result" class="mt-4 text-gray-700 whitespace-pre-wrap"></pre>
-            </div>
-
-            <!-- Staking TEA -->
             <div id="staking-oss" class="tab-content hidden p-4 border border-gray-200 rounded-lg">
                 <h2 class="text-xl font-semibold text-gray-800 mb-2">Staking TEA</h2>
                 <p class="text-gray-600 mb-4">Stake or unstake your TEA tokens to earn rewards.</p>
-                <p id="staked-tea-balance" class="text-gray-600 mb-4">Staked TEA Balance: 0 TEA</p>
+                <p id="user-staked-tea" class="text-gray-600 mb-4">Staked TEA Balance: 0 TEA</p>
                 <input id="stake-tea-amount" type="text" placeholder="Amount to Stake (TEA)" class="w-full p-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <div id="stake-tea-error" class="text-red-500 mt-2 hidden"></div>
                 <input id="unstake-tea-amount" type="text" placeholder="Amount to Unstake (TEA)" class="w-full p-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <div id="unstake-tea-error" class="text-red-500 mt-2 hidden"></div>
                 <div class="flex flex-col sm:flex-row gap-2">
-                    <button id="stake-tea-btn" class="flex-1 bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+                    <button id="stake-tea" class="flex-1 bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
                         Stake TEA
                     </button>
-                    <button id="unstake-tea-btn" class="flex-1 bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+                    <button id="unstake-tea" class="flex-1 bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
                         Unstake TEA
                     </button>
+                    <button id="withdraw-tea" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+                        Withdraw TEA
+                    </button>
                 </div>
+                <button id="refresh-staking-tea-btn" class="w-full bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors mt-4">
+                    Refresh Staking TEA
+                </button>
+            </div>
+
+            <div id="checker-tea" class="tab-content hidden p-4 border border-gray-200 rounded-lg">
+                <h2 class="text-xl font-semibold text-gray-800 mb-2">Checker TEA</h2>
+                <p class="text-gray-600 mb-4">Check TEA and USDT balance for any address.</p>
+                <input id="checker-address" type="text" placeholder="Enter Address (e.g., 0x123...)" class="w-full p-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <button id="check-tea-btn" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors mb-4">
+                    Check Balance
+                </button>
+                <p id="checker-result" class="text-gray-600 whitespace-pre-line"></p>
             </div>
         </div>
-
-        <p id="error" class="hidden text-red-500 text-center mt-4"></p>
     </div>
 
-    <!-- Footer -->
     <footer class="w-full p-4 text-center text-gray-600 bg-white rounded-lg shadow-lg">
         <p>© 2025 CreamyHub. All rights reserved.</p>
         <div class="flex justify-center gap-4 mt-2">
@@ -446,7 +487,6 @@
         </div>
     </footer>
 
-    <!-- Wallet Choice Modal -->
     <div id="wallet-choice-modal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden">
         <div class="bg-white rounded-lg p-6 w-full max-w-sm">
             <h2 class="text-xl font-semibold text-gray-800 mb-4">Choose Wallet</h2>
@@ -462,52 +502,70 @@
         </div>
     </div>
 
-    <!-- Faucet Modal -->
-    <div id="faucet-modal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden">
-        <div class="bg-white rounded-lg p-6 w-full max-w-sm">
-            <h2 class="text-xl font-semibold text-gray-800 mb-4">Request Test Tokens</h2>
-            <p class="text-gray-600 mb-4">Request TEA tokens for testing on the Sepolia network.</p>
-            <button id="request-faucet" class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors mb-4">
-                Request Tokens
-            </button>
-            <button id="faucet-close" class="w-full bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-lg transition-colors">
-                Close
-            </button>
-        </div>
-    </div>
-
-    <!-- Recent Transaction Modal -->
     <div id="recent-tx-modal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden">
         <div class="bg-white rounded-lg p-6 w-full max-w-md">
             <h2 class="text-xl font-semibold text-gray-800 mb-4">Recent Transactions</h2>
-            <div id="recent-tx-list" class="max-h-64 overflow-y-auto mb-4">
-                <!-- Daftar transaksi akan diisi oleh JavaScript -->
-            </div>
+            <div id="recent-tx-list" class="max-h-64 overflow-y-auto mb-4"></div>
             <button id="close-recent-tx" class="w-full bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-lg transition-colors">
                 Close
             </button>
         </div>
     </div>
 
-    <!-- Alert Modal -->
-    <div id="alert-modal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden">
-      <div class="bg-white rounded-lg p-6 w-full max-w-sm">
-        <h2 class="text-xl font-semibold mb-4">Alert</h2>
-        <p id="alert-message" class="text-gray-700 mb-4"></p>
-        <button id="close-alert" class="w-full bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-lg transition-colors">
-          Close
-        </button>
-      </div>
-    </div>
-
-    <!-- Loading Modal -->
-    <div id="loading-modal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden">
-        <div class="bg-white rounded-lg p-6 w-full max-w-sm flex flex-col items-center">
-            <h2 class="text-xl font-semibold text-gray-800 mb-4">Processing...</h2>
-            <div class="loader border-t-4 border-blue-500 rounded-full w-8 h-8 animate-spin"></div>
+    <div id="alert" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md shadow-lg">
+            <div class="flex items-center gap-3 mb-4">
+                <svg id="alert-icon" class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 3c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                </svg>
+                <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200">Alert</h2>
+            </div>
+            <p id="alert-message" class="text-gray-700 dark:text-gray-300 mb-6 leading-relaxed"></p>
+            <button id="close-alert" class="w-full bg-gray-300 hover:bg-gray-400 dark:bg-gray-600 dark:hover:bg-gray-500 text-gray-800 dark:text-gray-200 font-semibold py-2 px-4 rounded-lg transition-colors">
+                Close
+            </button>
         </div>
     </div>
 
+    <!-- Pop-up Pending Transaksi -->
+    <div id="pending-transaction" class="hidden fixed bottom-4 right-4 bg-gray-800 dark:bg-gray-700 text-white p-4 rounded-lg shadow-lg flex items-center space-x-2 max-w-xs">
+      <svg class="animate-spin h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+      <div>
+        <p id="pending-title" class="font-semibold"></p>
+        <p id="pending-message" class="text-sm">Transaction is being submitted...</p>
+      </div>
+      <button id="close-pending" class="ml-2 text-gray-400 hover:text-white">
+        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+
+    <script>
+        // Dark mode toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', () => {
+            document.body.classList.toggle('dark', themeToggle.checked);
+        });
+
+        // Scroll hint toggle for tab container
+        const tabContainer = document.getElementById('tab-container');
+        const scrollHint = document.getElementById('scroll-hint');
+        if (tabContainer && scrollHint) {
+            tabContainer.addEventListener('scroll', () => {
+                const isScrolledEnd = tabContainer.scrollLeft + tabContainer.clientWidth >= tabContainer.scrollWidth - 1;
+                tabContainer.classList.toggle('scrolled-end', isScrolledEnd);
+                if (isScrolledEnd) {
+                    scrollHint.classList.add('hidden');
+                } else {
+                    scrollHint.classList.remove('hidden');
+                }
+            });
+        }
+    </script>
     <script src="app.js" defer></script>
 </body>
 </html>
