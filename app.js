@@ -41,8 +41,7 @@ const StakingABI = [
 const StakingOSSABI = [
   "function stake() payable",
   "function unstake(uint256 amount)",
-  "function getStake(address user) view returns (uint256)",
-  "function withdraw()"
+  "function getStake(address user) view returns (uint256)"
 ];
 
 const UsdtTokenABI = [
@@ -65,6 +64,23 @@ const FaucetABI = [
   "function getFaucetBalance() external view returns (uint256)"
 ];
 
+const SimpleTokenABI = [
+  "constructor(string memory _name, string memory _symbol, uint256 _totalSupply)",
+  "function name() view returns (string)",
+  "function symbol() view returns (string)",
+  "function decimals() view returns (uint8)",
+  "function totalSupply() view returns (uint256)",
+  "function balanceOf(address account) view returns (uint256)",
+  "function transfer(address to, uint256 value) returns (bool)",
+  "function allowance(address owner, address spender) view returns (uint256)",
+  "function approve(address spender, uint256 value) returns (bool)",
+  "function transferFrom(address from, address to, uint256 value) returns (bool)",
+  "event Transfer(address indexed from, address indexed to, uint256 value)",
+  "event Approval(address indexed owner, address indexed spender, uint256 value)"
+];
+
+const SimpleTokenBytecode = "60806040523480156200001157600080fd5b5060405162001696380380620016968339818101604052810190620000379190620002c2565b82600090805190602001906200004f92919062000189565b5081600190805190602001906200006892919062000189565b50601260ff16600a6200007c91906200043a565b8162000089919062000577565b60028190555033600560006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff160217905550600254600360003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020819055503373ffffffffffffffffffffffffffffffffffffffff16600073ffffffffffffffffffffffffffffffffffffffff167fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef6002546040516200017891906200035b565b60405180910390a350505062000702565b828054620001979062000618565b90600052602060002090601f016020900481019282620001bb576000855562000207565b82601f10620001d657805160ff191683800117855562000207565b8280016001018555821562000207579182015b8281111562000206578251825591602001919060010190620001e9565b5b5090506200021691906200021a565b5090565b5b80821115620002355760008160009055506001016200021b565b5090565b6000620002506200024a84620003ac565b62000378565b9050828152602081018484840111156200026957600080fd5b62000276848285620005e2565b509392505050565b600082601f8301126200029057600080fd5b8151620002a284826020860162000239565b91505092915050565b600081519050620002bc81620006e8565b92915050565b600080600060608486031215620002d857600080fd5b600084015167ffffffffffffffff811115620002f357600080fd5b62000301868287016200027e565b935050602084015167ffffffffffffffff8111156200031f57600080fd5b6200032d868287016200027e565b92505060406200034086828701620002ab565b9150509250925092565b6200035581620005d8565b82525050565b60006020820190506200037260008301846200034a565b92915050565b6000604051905081810181811067ffffffffffffffff82111715620003a257620003a1620006ac565b5b8060405250919050565b600067ffffffffffffffff821115620003ca57620003c9620006ac565b5b601f19601f8301169050602081019050919050565b6000808291508390505b600185111562000431578086048111156200040957620004086200064e565b5b6001851615620004195780820291505b80810290506200042985620006db565b9450620003e9565b94509492505050565b60006200044782620005d8565b91506200045483620005d8565b9250620004837fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff84846200048b565b905092915050565b6000826200049d576001905062000570565b81620004ad576000905062000570565b8160018114620004c65760028114620004d15762000507565b600191505062000570565b60ff841115620004e657620004e56200064e565b5b8360020a9150848211156200050057620004ff6200064e565b5b5062000570565b5060208310610133831016604e8410600b8410161715620005415782820a9050838111156200053b576200053a6200064e565b5b62000570565b620005508484846001620003df565b925090508184048111156200056a57620005696200064e565b5b81810290505b9392505050565b60006200058482620005d8565b91506200059183620005d8565b9250817fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0483118215151615620005cd57620005cc6200064e565b5b828202905092915050565b6000819050919050565b60005b8381101562000602578082015181840152602081019050620005e5565b8381111562000612576000848401525b50505050565b600060028204905060018216806200063157607f821691505b602082108114156200064857620006476200067d565b5b50919050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052601160045260246000fd5b7f4e487b7100000000000000000000000000000000000000000000000000000000600052602260045260246000fd5b7f4e487b7100000000000000000000000000000000000000000000000000000000600052604160045260246000fd5b60008160011c9050919050565b620006f381620005d8565b8114620006ff57600080fd5b50565b610f8480620007126000396000f3fe608060405234801561001057600080fd5b506004361061009e5760003560e01c806370a082311161006657806370a082311461015d5780638da5cb5b1461018d57806395d89b41146101ab578063a9059cbb146101c9578063dd62ed3e146101f95761009e565b806306fdde03146100a3578063095ea7b3146100c157806318160ddd146100f157806323b872dd1461010f578063313ce5671461013f575b600080fd5b6100ab610229565b6040516100b89190610c99565b60405180910390f35b6100db60048036038101906100d69190610af2565b6102b7565b6040516100e89190610c7e565b60405180910390f35b6100f96103a9565b6040516101069190610d1b565b60405180910390f35b61012960048036038101906101249190610aa3565b6103af565b6040516101369190610c7e565b60405180910390f35b610147610710565b6040516101549190610d36565b60405180910390f35b61017760048036038101906101729190610a3e565b610715565b6040516101849190610d1b565b60405180910390f35b61019561072d565b6040516101a29190610c63565b60405180910390f35b6101b3610753565b6040516101c09190610c99565b60405180910390f35b6101e360048036038101906101de9190610af2565b6107e1565b6040516101f09190610c7e565b60405180910390f35b610213600480360381019061020e9190610a67565b6109ef565b6040516102209190610d1b565b60405180910390f35b6000805461023690610e7f565b80601f016020809104026020016040519081016040528092919081815260200182805461026290610e7f565b80156102af5780601f10610284576101008083540402835291602001916102af565b820191906000526020600020905b81548152906001019060200180831161029257829003601f168201915b505050505081565b600081600460003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060008573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020819055508273ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff167f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925846040516103979190610d1b565b60405180910390a36001905092915050565b60025481565b60008073ffffffffffffffffffffffffffffffffffffffff168373ffffffffffffffffffffffffffffffffffffffff161415610420576040517f08c379a000000000000000000000000000000000000000000000000000000000815260040161041790610cbb565b60405180910390fd5b81600360008673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000205410156104a2576040517f08c379a000000000000000000000000000000000000000000000000000000000815260040161049990610cfb565b60405180910390fd5b81600460008673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020541015610561576040517f08c379a000000000000000000000000000000000000000000000000000000000815260040161055890610cdb565b60405180910390fd5b81600360008673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060008282546105b09190610dc3565b9250508190555081600360008573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060008282546106069190610d6d565b9250508190555081600460008673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060008282546106999190610dc3565b925050819055508273ffffffffffffffffffffffffffffffffffffffff168473ffffffffffffffffffffffffffffffffffffffff167fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef846040516106fd9190610d1b565b60405180910390a3600190509392505050565b601281565b60036020528060005260406000206000915090505481565b600560009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b6001805461076090610e7f565b80601f016020809104026020016040519081016040528092919081815260200182805461078c90610e7f565b80156107d95780601f106107ae576101008083540402835291602001916107d9565b820191906000526020600020905b8154815290600101906020018083116107bc57829003601f168201915b505050505081565b60008073ffffffffffffffffffffffffffffffffffffffff168373ffffffffffffffffffffffffffffffffffffffff161415610852576040517f08c379a000000000000000000000000000000000000000000000000000000000815260040161084990610cbb565b60405180910390fd5b81600360003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000205410156108d4576040517f08c379a00000000000000000000000000000000000000000000000000000000081526004016108cb90610cfb565b60405180910390fd5b81600360003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060008282546109239190610dc3565b9250508190555081600360008573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060008282546109799190610d6d565b925050819055508273ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff167fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef846040516109dd9190610d1b565b60405180910390a36001905092915050565b6004602052816000526040600020602052806000526040600020600091509150505481565b600081359050610a2381610f20565b92915050565b600081359050610a3881610f37565b92915050565b600060208284031215610a5057600080fd5b6000610a5e84828501610a14565b91505092915050565b60008060408385031215610a7a57600080fd5b6000610a8885828601610a14565b9250506020610a9985828601610a14565b9150509250929050565b600080600060608486031215610ab857600080fd5b6000610ac686828701610a14565b9350506020610ad786828701610a14565b9250506040610ae886828701610a29565b9150509250925092565b60008060408385031215610b0557600080fd5b6000610b1385828601610a14565b9250506020610b2485828601610a29565b9150509250929050565b610b3781610df7565b82525050565b610b4681610e09565b82525050565b6000610b5782610d51565b610b618185610d5c565b9350610b71818560208601610e4c565b610b7a81610f0f565b840191505092915050565b6000610b92600f83610d5c565b91507f496e76616c6964206164647265737300000000000000000000000000000000006000830152602082019050919050565b6000610bd2601683610d5c565b91507f496e73756666696369656e7420616c6c6f77616e6365000000000000000000006000830152602082019050919050565b6000610c12601483610d5c565b91507f496e73756666696369656e742062616c616e63650000000000000000000000006000830152602082019050919050565b610c4e81610e35565b82525050565b610c5d81610e3f565b82525050565b6000602082019050610c786000830184610b2e565b92915050565b6000602082019050610c936000830184610b3d565b92915050565b60006020820190508181036000830152610cb38184610b4c565b905092915050565b60006020820190508181036000830152610cd481610b85565b9050919050565b60006020820190508181036000830152610cf481610bc5565b9050919050565b60006020820190508181036000830152610d1481610c05565b9050919050565b6000602082019050610d306000830184610c45565b92915050565b6000602082019050610d4b6000830184610c54565b92915050565b600081519050919050565b600082825260208201905092915050565b6000610d7882610e35565b9150610d8383610e35565b9250827fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff03821115610db857610db7610eb1565b5b828201905092915050565b6000610dce82610e35565b9150610dd983610e35565b925082821015610dec57610deb610eb1565b5b828203905092915050565b6000610e0282610e15565b9050919050565b60008115159050919050565b600073ffffffffffffffffffffffffffffffffffffffff82169050919050565b6000819050919050565b600060ff82169050919050565b60005b83811015610e6a578082015181840152602081019050610e4f565b83811115610e79576000848401525b50505050565b60006002820490506001821680610e9757607f821691505b60208210811415610eab57610eaa610ee0565b5b50919050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052601160045260246000fd5b7f4e487b7100000000000000000000000000000000000000000000000000000000600052602260045260246000fd5b6000601f19601f8301169050919050565b610f2981610df7565b8114610f3457600080fd5b50565b610f4081610e35565b8114610f4b57600080fd5b5056fea26469706673582212206ce198cc3ca97b04649189f9d320d30b05cb607239d812017a47d67945e3e6df64736f6c63430008000033"; // Bytecode skipped as per request
+
 const DEFAULT_GAS_LIMIT = 1000000;
 let recentTransactions = [];
 
@@ -74,14 +90,19 @@ function showMessage(message, isError = true, txHash = null) {
   const messageText = document.getElementById("message-text");
   const messageIcon = document.getElementById("message-icon");
 
+  messageTitle.textContent = "Alert";
   messageText.innerHTML = message;
+
   if (isError) {
-    messageTitle.textContent = "Alert";
     messageIcon.className = "w-6 h-6 text-red-500";
+    messageTitle.classList.add("text-red-500");
+    messageText.classList.add("text-red-500");
     messageIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 3c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>`;
   } else {
     messageTitle.textContent = "Success";
     messageIcon.className = "w-6 h-6 text-green-500";
+    messageTitle.classList.remove("text-red-500");
+    messageText.classList.remove("text-red-500");
     messageIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>`;
     if (txHash) {
       messageText.innerHTML += `<br><a href="https://sepolia.tea.xyz/tx/${txHash}" target="_blank" rel="noopener noreferrer" class="text-blue-500 underline">View on Explorer</a>`;
@@ -199,6 +220,7 @@ async function updateUIAfterConnect() {
   await refreshLiquidityPoolInfo();
   await refreshStakingOSSInfo();
   await updateFaucetStatus();
+  startChainStatusCheck();
 }
 
 async function connectWallet(walletType) {
@@ -227,7 +249,15 @@ async function connectWallet(walletType) {
     await updateUIAfterConnect();
   } catch (error) {
     console.error("Error connecting wallet:", error);
-    showMessage(`Failed to connect wallet: ${error.message}`);
+    let errorMessage = "Something went wrong while connecting your wallet. Please try again later. 😔";
+    if (error.message.includes("MetaMask not detected")) {
+      errorMessage = "MetaMask not detected. Please install MetaMask and try again. 😊";
+    } else if (error.message.includes("OKX Wallet not detected")) {
+      errorMessage = "OKX Wallet not detected. Please install or enable OKX Wallet and try again. 😊";
+    } else if (error.code === 'ACTION_REJECTED') {
+      errorMessage = "Oops! You canceled the wallet connection. Please try again if you'd like to proceed. 😊";
+    }
+    showMessage(errorMessage);
   }
 }
 
@@ -257,6 +287,26 @@ async function updateWalletInfo() {
   document.getElementById("usdt-balance").textContent = `USDT Balance: ${ethers.utils.formatUnits(usdtBalance, 18)} USDT`;
   document.getElementById("tea-balance").textContent = `TEA Balance: ${ethers.utils.formatEther(balance)} TEA`;
   document.getElementById("network").textContent = `Network: Tea Sepolia`;
+}
+
+async function checkChainStatus() {
+  try {
+    const network = await provider.getNetwork();
+    const networkElement = document.getElementById("network");
+    if (network.chainId === 10218) {
+      networkElement.innerHTML = `Network: Tea Sepolia <span class="network-dot"></span>`;
+    } else {
+      networkElement.innerHTML = `Network: Unknown`;
+    }
+  } catch (error) {
+    console.error("Error checking chain status:", error);
+    document.getElementById("network").innerHTML = `Network: Error`;
+  }
+}
+
+function startChainStatusCheck() {
+  checkChainStatus();
+  setInterval(checkChainStatus, 10000);
 }
 
 document.getElementById("copy-address").addEventListener("click", () => {
@@ -307,33 +357,76 @@ async function refreshNFTState() {
     }
   } catch (error) {
     console.error("Error refreshing NFT state:", error);
-    showMessage(`Failed to refresh NFT state: ${error.message}`);
+    let errorMessage = "Something went wrong while refreshing your NFT state. Please try again later. 😔";
+    if (error.code === 'ACTION_REJECTED') {
+      errorMessage = "Oops! You canceled the request to refresh your NFT state. Please try again if you'd like to proceed. 😊";
+    }
+    showMessage(errorMessage);
   }
 }
-
-document.getElementById("refresh-nft-state").addEventListener("click", refreshNFTState);
 
 document.getElementById("mint-btn").addEventListener("click", async () => {
   try {
     showPendingTransaction("Mint NFT");
     const mintTx = await NFTContract.mintNFT(userAddress, { gasLimit: DEFAULT_GAS_LIMIT });
     await mintTx.wait();
-    showMessage("NFT Minted Successfully", false, mintTx.hash);
+    showMessage("NFT Minted Successfully 🎉", false, mintTx.hash);
     logAction("Mint NFT", { txHash: mintTx.hash });
     await refreshNFTState();
   } catch (error) {
     console.error("Error minting NFT:", error);
-    let errorMessage = "Failed to mint NFT: ";
+    let errorMessage = "Something went wrong while minting your NFT. Please try again later. 😔";
     if (error.code === "UNPREDICTABLE_GAS_LIMIT") {
-      errorMessage += "Transaction may fail or requires manual gas limit. Check if the NFT contract is correctly deployed and the mint function is accessible.";
-    } else {
-      errorMessage += error.message;
+      errorMessage = "Transaction may fail due to gas issues. Please check the NFT contract or try setting a manual gas limit. 😔";
+    } else if (error.code === 'ACTION_REJECTED') {
+      errorMessage = "Oops! You canceled the NFT minting transaction. Please try again if you'd like to proceed. 😊";
     }
     showMessage(errorMessage);
   } finally {
     hidePendingTransaction();
   }
 });
+
+async function checkAllowance(amount, tokenContract, spender, actionType) {
+  const tokenAmount = amount || ethers.BigNumber.from(0);
+  const allowance = await tokenContract.allowance(userAddress, spender);
+  const needsApproval = allowance.lt(tokenAmount);
+
+  if (actionType === "add-liquidity") {
+    document.getElementById("approve-add-liquidity").classList.toggle("hidden", !needsApproval);
+    document.getElementById("add-liquidity").classList.toggle("hidden", needsApproval);
+  } else if (actionType === "remove-liquidity") {
+    document.getElementById("approve-remove-liquidity").classList.toggle("hidden", !needsApproval);
+    document.getElementById("remove-liquidity").classList.toggle("hidden", needsApproval);
+  } else if (actionType === "stake-lp") {
+    document.getElementById("approve-stake-lp").classList.toggle("hidden", !needsApproval);
+    document.getElementById("stake-lp").classList.toggle("hidden", needsApproval);
+  } else if (actionType === "unstake-lp") {
+    document.getElementById("approve-unstake-lp").classList.toggle("hidden", !needsApproval);
+    document.getElementById("unstake-lp").classList.toggle("hidden", needsApproval);
+  }
+
+  return needsApproval;
+}
+
+async function approveToken(amount, tokenContract, spender, actionType) {
+  try {
+    showPendingTransaction("Approve Token");
+    const approveTx = await tokenContract.approve(spender, amount, { gasLimit: DEFAULT_GAS_LIMIT });
+    await approveTx.wait();
+    showMessage("Token Approved Successfully 🎉", false, approveTx.hash);
+    await checkAllowance(amount, tokenContract, spender, actionType);
+  } catch (error) {
+    console.error(`Error approving token for ${actionType}:`, error);
+    let errorMessage = "Something went wrong while approving the token. Please try again later. 😔";
+    if (error.code === 'ACTION_REJECTED') {
+      errorMessage = "Oops! You canceled the token approval. Please try again if you'd like to proceed. 😊";
+    }
+    showMessage(errorMessage);
+  } finally {
+    hidePendingTransaction();
+  }
+}
 
 async function addLiquidity() {
   try {
@@ -345,32 +438,37 @@ async function addLiquidity() {
     const teaAmountFloat = parseFloat(teaAmountInput);
     const usdtAmountFloat = parseFloat(usdtAmountInput);
     if (isNaN(teaAmountFloat) || teaAmountFloat <= 0) {
-      throw new Error("Please enter a valid TEA amount greater than 0.");
+      throw new Error("Please enter a valid TEA amount greater than 0. 😊");
     }
     if (isNaN(usdtAmountFloat) || usdtAmountFloat <= 0) {
-      throw new Error("Please enter a valid USDT amount greater than 0.");
+      throw new Error("Please enter a valid USDT amount greater than 0. 😊");
     }
 
     const MAX_UINT256 = ethers.BigNumber.from("115792089237316195423570985008687907853269984665640564039457584007913129639935");
     const teaAmount = ethers.utils.parseEther(teaAmountInput);
     const usdtAmount = ethers.utils.parseUnits(usdtAmountInput, 18);
     if (teaAmount.gt(MAX_UINT256)) {
-      throw new Error("TEA amount is too large. Please enter a smaller value.");
+      throw new Error("TEA amount is too large. Please enter a smaller value. 😊");
     }
     if (usdtAmount.gt(MAX_UINT256)) {
-      throw new Error("USDT amount is too large. Please enter a smaller value.");
+      throw new Error("USDT amount is too large. Please enter a smaller value. 😊");
+    }
+
+    const needsApproval = await checkAllowance(usdtAmount, UsdtTokenContract, LiquidityPoolAddress, "add-liquidity");
+    if (needsApproval) {
+      return;
     }
 
     showPendingTransaction("Add Liquidity");
 
     const teaBalance = await provider.getBalance(userAddress);
     if (teaBalance.lt(teaAmount)) {
-      throw new Error("Insufficient TEA balance.");
+      throw new Error("You don't have enough TEA to add liquidity. 😔");
     }
 
     const usdtBalance = await UsdtTokenContract.balanceOf(userAddress);
     if (usdtBalance.lt(usdtAmount)) {
-      throw new Error("Insufficient USDT balance.");
+      throw new Error("You don't have enough USDT to add liquidity. 😔");
     }
 
     const reserves = await LiquidityPoolContract.getReserves();
@@ -383,7 +481,7 @@ async function addLiquidity() {
     if (teaReserve === 0 && usdtReserve === 0) {
       // Initial liquidity: no slippage check needed
     } else if (teaReserve === 0) {
-      throw new Error("Cannot calculate ratio: TEA reserve is 0.");
+      throw new Error("Cannot calculate ratio: TEA reserve is 0. 😔");
     } else {
       const poolRatio = usdtReserve / teaReserve;
       const expectedUsdtAmountFloat = teaAmountFloat * poolRatio;
@@ -394,16 +492,9 @@ async function addLiquidity() {
 
       if (usdtAmount.lt(minUsdtAmount)) {
         throw new Error(
-          `Insufficient USDT amount. Expected at least ${ethers.utils.formatUnits(minUsdtAmount, 18)} USDT for ${teaAmountInput} TEA based on pool ratio (including slippage).`
+          `Insufficient USDT amount. You need at least ${ethers.utils.formatUnits(minUsdtAmount, 18)} USDT for ${teaAmountInput} TEA based on the pool ratio (including slippage). 😔`
         );
       }
-    }
-
-    const allowance = await UsdtTokenContract.allowance(userAddress, LiquidityPoolAddress);
-    if (allowance.lt(usdtAmount)) {
-      const approveTx = await UsdtTokenContract.approve(LiquidityPoolAddress, usdtAmount, { gasLimit: DEFAULT_GAS_LIMIT });
-      await approveTx.wait();
-      showMessage("USDT Approved Successfully", false, approveTx.hash);
     }
 
     try {
@@ -413,7 +504,7 @@ async function addLiquidity() {
       });
     } catch (gasError) {
       console.error("Gas estimation failed:", gasError);
-      throw new Error(`Gas estimation failed: ${gasError.message}`);
+      throw new Error(`Gas estimation failed. Please try again or set a manual gas limit. 😔`);
     }
 
     const tx = await LiquidityPoolContract.addLiquidity(usdtAmount, {
@@ -421,7 +512,7 @@ async function addLiquidity() {
       gasLimit: DEFAULT_GAS_LIMIT,
     });
     await tx.wait();
-    showMessage("Liquidity Added Successfully", false, tx.hash);
+    showMessage("Liquidity Added Successfully 🎉", false, tx.hash);
     logAction("Add Liquidity", {
       teaAmount: teaAmount.toString(),
       usdtAmount: usdtAmount.toString(),
@@ -430,7 +521,13 @@ async function addLiquidity() {
     await refreshLiquidityPoolInfo();
   } catch (error) {
     console.error("Error adding liquidity:", error);
-    showMessage(`Failed to add liquidity: ${error.message}`);
+    let errorMessage = "Something went wrong while adding liquidity. Please try again later. 😔";
+    if (error.code === 'ACTION_REJECTED') {
+      errorMessage = "Oops! You canceled the liquidity addition. Please try again if you'd like to proceed. 😊";
+    } else if (error.message.includes("insufficient")) {
+      errorMessage = error.message; // Pesan sudah user-friendly
+    }
+    showMessage(errorMessage);
   } finally {
     hidePendingTransaction();
     document.getElementById("add-liquidity").disabled = false;
@@ -438,6 +535,45 @@ async function addLiquidity() {
 }
 
 document.getElementById("add-liquidity").addEventListener("click", addLiquidity);
+document.getElementById("approve-add-liquidity").addEventListener("click", async () => {
+  const usdtAmountInput = document.getElementById("usdt-amount").value;
+  const usdtAmount = ethers.utils.parseUnits(usdtAmountInput, 18);
+  await approveToken(usdtAmount, UsdtTokenContract, LiquidityPoolAddress, "add-liquidity");
+});
+
+document.getElementById("tea-amount").addEventListener("input", async () => {
+  const teaAmountInput = document.getElementById("tea-amount").value;
+  const usdtAmountInput = document.getElementById("usdt-amount");
+  const teaAmountFloat = parseFloat(teaAmountInput);
+
+  if (isNaN(teaAmountFloat) || teaAmountFloat <= 0) {
+    usdtAmountInput.value = "";
+    return;
+  }
+
+  try {
+    const reserves = await LiquidityPoolContract.getReserves();
+    const teaReserveRaw = reserves[0];
+    const usdtReserveRaw = reserves[1];
+
+    const teaReserve = parseFloat(ethers.utils.formatEther(teaReserveRaw));
+    const usdtReserve = parseFloat(ethers.utils.formatUnits(usdtReserveRaw, 18));
+
+    if (teaReserve === 0 || usdtReserve === 0) {
+      usdtAmountInput.value = "0";
+    } else {
+      const poolRatio = usdtReserve / teaReserve;
+      const expectedUsdtAmountFloat = teaAmountFloat * poolRatio;
+      usdtAmountInput.value = expectedUsdtAmountFloat.toFixed(2);
+    }
+
+    const usdtAmount = ethers.utils.parseUnits(usdtAmountInput.value || "0", 18);
+    await checkAllowance(usdtAmount, UsdtTokenContract, LiquidityPoolAddress, "add-liquidity");
+  } catch (error) {
+    console.error("Error calculating USDT amount:", error);
+    usdtAmountInput.value = "0";
+  }
+});
 
 async function removeLiquidity() {
   try {
@@ -447,13 +583,19 @@ async function removeLiquidity() {
 
     const liquidityFloat = parseFloat(liquidityInput);
     if (isNaN(liquidityFloat) || liquidityFloat <= 0) {
-      throw new Error("Please enter a valid LP token amount greater than 0.");
+      throw new Error("Please enter a valid LP token amount greater than 0. 😊");
     }
 
     const liquidity = ethers.utils.parseEther(liquidityInput);
     const userLiquidity = await LiquidityPoolContract.balanceOf(userAddress);
     if (userLiquidity.lt(liquidity)) {
-      throw new Error("Insufficient LP token balance.");
+      throw new Error("You don't have enough LP tokens to remove liquidity. 😔");
+    }
+
+    const lpTokenContract = new ethers.Contract(LiquidityPoolAddress, UsdtTokenABI, signer);
+    const needsApproval = await checkAllowance(liquidity, lpTokenContract, LiquidityPoolAddress, "remove-liquidity");
+    if (needsApproval) {
+      return;
     }
 
     showPendingTransaction("Remove Liquidity");
@@ -464,19 +606,25 @@ async function removeLiquidity() {
       });
     } catch (gasError) {
       console.error("Gas estimation failed:", gasError);
-      throw new Error(`Gas estimation failed: ${gasError.message}`);
+      throw new Error(`Gas estimation failed. Please try again or set a manual gas limit. 😔`);
     }
 
     const tx = await LiquidityPoolContract.removeLiquidity(liquidity, {
       gasLimit: DEFAULT_GAS_LIMIT,
     });
     await tx.wait();
-    showMessage("Liquidity Removed Successfully", false, tx.hash);
+    showMessage("Liquidity Removed Successfully 🎉", false, tx.hash);
     logAction("Remove Liquidity", { liquidity: liquidity.toString(), txHash: tx.hash });
     await refreshLiquidityPoolInfo();
   } catch (error) {
     console.error("Error removing liquidity:", error);
-    showMessage(`Failed to remove liquidity: ${error.message}`);
+    let errorMessage = "Something went wrong while removing liquidity. Please try again later. 😔";
+    if (error.code === 'ACTION_REJECTED') {
+      errorMessage = "Oops! You canceled the liquidity removal. Please try again if you'd like to proceed. 😊";
+    } else if (error.message.includes("insufficient")) {
+      errorMessage = error.message; // Pesan sudah user-friendly
+    }
+    showMessage(errorMessage);
   } finally {
     hidePendingTransaction();
     document.getElementById("remove-liquidity").disabled = false;
@@ -484,6 +632,20 @@ async function removeLiquidity() {
 }
 
 document.getElementById("remove-liquidity").addEventListener("click", removeLiquidity);
+document.getElementById("approve-remove-liquidity").addEventListener("click", async () => {
+  const liquidityInput = document.getElementById("liquidity-amount").value;
+  const liquidity = ethers.utils.parseEther(liquidityInput);
+  const lpTokenContract = new ethers.Contract(LiquidityPoolAddress, UsdtTokenABI, signer);
+  await approveToken(liquidity, lpTokenContract, LiquidityPoolAddress, "remove-liquidity");
+});
+
+document.getElementById("liquidity-amount").addEventListener("input", async () => {
+  const liquidityInput = document.getElementById("liquidity-amount").value;
+  const liquidityFloat = parseFloat(liquidityInput);
+  const liquidity = isNaN(liquidityFloat) || liquidityFloat <= 0 ? ethers.BigNumber.from(0) : ethers.utils.parseEther(liquidityInput);
+  const lpTokenContract = new ethers.Contract(LiquidityPoolAddress, UsdtTokenABI, signer);
+  await checkAllowance(liquidity, lpTokenContract, LiquidityPoolAddress, "remove-liquidity");
+});
 
 async function stakeLP() {
   try {
@@ -493,24 +655,22 @@ async function stakeLP() {
 
     const amountFloat = parseFloat(amountInput);
     if (isNaN(amountFloat) || amountFloat <= 0) {
-      throw new Error("Please enter a valid LP token amount greater than 0.");
+      throw new Error("Please enter a valid LP token amount greater than 0. 😊");
     }
 
     const amount = ethers.utils.parseEther(amountInput);
     const lpTokenContract = new ethers.Contract(LiquidityPoolAddress, UsdtTokenABI, signer);
     const userLiquidity = await lpTokenContract.balanceOf(userAddress);
     if (userLiquidity.lt(amount)) {
-      throw new Error("Insufficient LP token balance.");
+      throw new Error("You don't have enough LP tokens to stake. 😔");
+    }
+
+    const needsApproval = await checkAllowance(amount, lpTokenContract, StakingAddress, "stake-lp");
+    if (needsApproval) {
+      return;
     }
 
     showPendingTransaction("Stake LP Tokens");
-
-    const allowance = await lpTokenContract.allowance(userAddress, StakingAddress);
-    if (allowance.lt(amount)) {
-      const approveTx = await lpTokenContract.approve(StakingAddress, amount, { gasLimit: DEFAULT_GAS_LIMIT });
-      await approveTx.wait();
-      showMessage("LP Token Approved Successfully", false, approveTx.hash);
-    }
 
     try {
       await StakingContract.estimateGas.stake(amount, {
@@ -518,19 +678,25 @@ async function stakeLP() {
       });
     } catch (gasError) {
       console.error("Gas estimation failed:", gasError);
-      throw new Error(`Gas estimation failed: ${gasError.message}`);
+      throw new Error(`Gas estimation failed. Please try again or set a manual gas limit. 😔`);
     }
 
     const tx = await StakingContract.stake(amount, {
       gasLimit: DEFAULT_GAS_LIMIT,
     });
     await tx.wait();
-    showMessage("LP Tokens Staked Successfully", false, tx.hash);
+    showMessage("LP Tokens Staked Successfully 🎉", false, tx.hash);
     logAction("Stake LP Tokens", { amount: amount.toString(), txHash: tx.hash });
     await refreshLiquidityPoolInfo();
   } catch (error) {
     console.error("Error staking LP tokens:", error);
-    showMessage(`Failed to stake LP tokens: ${error.message}`);
+    let errorMessage = "Something went wrong while staking your LP tokens. Please try again later. 😔";
+    if (error.code === 'ACTION_REJECTED') {
+      errorMessage = "Oops! You canceled the LP token staking. Please try again if you'd like to proceed. 😊";
+    } else if (error.message.includes("insufficient")) {
+      errorMessage = error.message; // Pesan sudah user-friendly
+    }
+    showMessage(errorMessage);
   } finally {
     hidePendingTransaction();
     document.getElementById("stake-lp").disabled = false;
@@ -538,6 +704,20 @@ async function stakeLP() {
 }
 
 document.getElementById("stake-lp").addEventListener("click", stakeLP);
+document.getElementById("approve-stake-lp").addEventListener("click", async () => {
+  const amountInput = document.getElementById("stake-lp-amount").value;
+  const amount = ethers.utils.parseEther(amountInput);
+  const lpTokenContract = new ethers.Contract(LiquidityPoolAddress, UsdtTokenABI, signer);
+  await approveToken(amount, lpTokenContract, StakingAddress, "stake-lp");
+});
+
+document.getElementById("stake-lp-amount").addEventListener("input", async () => {
+  const amountInput = document.getElementById("stake-lp-amount").value;
+  const amountFloat = parseFloat(amountInput);
+  const amount = isNaN(amountFloat) || amountFloat <= 0 ? ethers.BigNumber.from(0) : ethers.utils.parseEther(amountInput);
+  const lpTokenContract = new ethers.Contract(LiquidityPoolAddress, UsdtTokenABI, signer);
+  await checkAllowance(amount, lpTokenContract, StakingAddress, "stake-lp");
+});
 
 async function unstakeLP() {
   try {
@@ -547,13 +727,13 @@ async function unstakeLP() {
 
     const amountFloat = parseFloat(amountInput);
     if (isNaN(amountFloat) || amountFloat <= 0) {
-      throw new Error("Please enter a valid LP token amount greater than 0.");
+      throw new Error("Please enter a valid LP token amount greater than 0. 😊");
     }
 
     const amount = ethers.utils.parseEther(amountInput);
     const userStaked = await StakingContract.stakedBalance(userAddress);
     if (userStaked.lt(amount)) {
-      throw new Error("Insufficient staked LP token balance.");
+      throw new Error("You don't have enough staked LP tokens to unstake. 😔");
     }
 
     showPendingTransaction("Unstake LP Tokens");
@@ -564,19 +744,25 @@ async function unstakeLP() {
       });
     } catch (gasError) {
       console.error("Gas estimation failed:", gasError);
-      throw new Error(`Gas estimation failed: ${gasError.message}`);
+      throw new Error(`Gas estimation failed. Please try again or set a manual gas limit. 😔`);
     }
 
     const tx = await StakingContract.unstake(amount, {
       gasLimit: DEFAULT_GAS_LIMIT,
     });
     await tx.wait();
-    showMessage("LP Tokens Unstaked Successfully", false, tx.hash);
+    showMessage("LP Tokens Unstaked Successfully 🎉", false, tx.hash);
     logAction("Unstake LP Tokens", { amount: amount.toString(), txHash: tx.hash });
     await refreshLiquidityPoolInfo();
   } catch (error) {
     console.error("Error unstaking LP tokens:", error);
-    showMessage(`Failed to unstake LP tokens: ${error.message}`);
+    let errorMessage = "Something went wrong while unstaking your LP tokens. Please try again later. 😔";
+    if (error.code === 'ACTION_REJECTED') {
+      errorMessage = "Oops! You canceled the LP token unstaking. Please try again if you'd like to proceed. 😊";
+    } else if (error.message.includes("insufficient")) {
+      errorMessage = error.message; // Pesan sudah user-friendly
+    }
+    showMessage(errorMessage);
   } finally {
     hidePendingTransaction();
     document.getElementById("unstake-lp").disabled = false;
@@ -585,6 +771,10 @@ async function unstakeLP() {
 
 document.getElementById("unstake-lp").addEventListener("click", unstakeLP);
 
+document.getElementById("unstake-lp-amount").addEventListener("input", async () => {
+  // Tidak perlu cek allowance untuk unstake
+});
+
 async function refreshLiquidityPoolInfo() {
   try {
     const reserves = await LiquidityPoolContract.getReserves();
@@ -592,34 +782,38 @@ async function refreshLiquidityPoolInfo() {
     const lpTokenContract = new ethers.Contract(LiquidityPoolAddress, UsdtTokenABI, signer);
     const userLiquidity = await lpTokenContract.balanceOf(userAddress);
     
-    let userStaked, pendingRewards;
+    let userStaked;
     try {
       userStaked = await StakingContract.stakedBalance(userAddress);
     } catch (error) {
       console.error("Error fetching user staked LP:", error);
       userStaked = ethers.BigNumber.from(0);
     }
-    
-    try {
-      pendingRewards = await StakingContract.getPendingRewards(userAddress);
-    } catch (error) {
-      console.error("Error fetching pending rewards:", error);
-      pendingRewards = ethers.BigNumber.from(0);
-    }
 
-    document.getElementById("pool-tea-reserve").textContent = `TEA Reserve: ${ethers.utils.formatEther(reserves[0])} TEA`;
-    document.getElementById("pool-eth-reserve").textContent = `USDT Reserve: ${ethers.utils.formatUnits(reserves[1], 18)} USDT`;
-    document.getElementById("total-liquidity").textContent = `Total Liquidity: ${ethers.utils.formatEther(totalLiquidity)} LP Tokens`;
-    document.getElementById("user-liquidity").textContent = `Your Liquidity: ${ethers.utils.formatEther(userLiquidity)} LP Tokens`;
+    document.getElementById("pool-tea-reserve").textContent = `TEA Reserve in pools: ${ethers.utils.formatEther(reserves[0])} TEA`;
+    document.getElementById("pool-eth-reserve").textContent = `USDT Reserve in pools: ${ethers.utils.formatUnits(reserves[1], 18)} USDT`;
+    document.getElementById("total-liquidity").textContent = `Total Liquidity in pools all user: ${ethers.utils.formatEther(totalLiquidity)} LP Tokens`;
+    document.getElementById("user-liquidity").textContent = `Your Liquidity token: ${ethers.utils.formatEther(userLiquidity)} LP Tokens`;
     document.getElementById("user-staked-lp").textContent = `Staked LP Balance: ${ethers.utils.formatEther(userStaked)} LP Tokens`;
-    document.getElementById("user-pending-rewards").textContent = `Pending Rewards: ${ethers.utils.formatEther(pendingRewards)} TEA`;
+
+    const usdtAmount = ethers.utils.parseUnits(document.getElementById("usdt-amount").value || "0", 18);
+    await checkAllowance(usdtAmount, UsdtTokenContract, LiquidityPoolAddress, "add-liquidity");
+
+    const liquidityAmount = ethers.utils.parseEther(document.getElementById("liquidity-amount").value || "0");
+    await checkAllowance(liquidityAmount, lpTokenContract, LiquidityPoolAddress, "remove-liquidity");
+
+    const stakeAmount = ethers.utils.parseEther(document.getElementById("stake-lp-amount").value || "0");
+    await checkAllowance(stakeAmount, lpTokenContract, StakingAddress, "stake-lp");
   } catch (error) {
     console.error("Error refreshing liquidity pool info:", error);
-    showMessage(`Failed to refresh liquidity pool info: ${error.message}`);
+    let errorMessage = "Something went wrong while refreshing liquidity pool info. Please try again later. 😔";
+    if (error.code === 'ACTION_REJECTED') {
+      errorMessage = "Oops! You canceled the request to refresh liquidity pool info. Please try again if you'd like to proceed. 😊";
+    }
+    showMessage(errorMessage);
   }
 }
 
-// Update preview for multi-sender
 const addressesInput = document.getElementById('addresses');
 if (addressesInput) {
   addressesInput.addEventListener('input', () => {
@@ -644,17 +838,15 @@ if (addressesInput) {
   });
 }
 
-// Fungsi untuk fix checksum alamat
 function fixAddressChecksum(address) {
   try {
     const lowerCaseAddress = address.toLowerCase();
     return ethers.utils.getAddress(lowerCaseAddress);
   } catch (error) {
-    throw new Error(`Invalid address: ${address}. Please ensure it's a valid Ethereum address.`);
+    throw new Error(`Invalid address: ${address}. Please ensure it's a valid Ethereum address. 😊`);
   }
 }
 
-// Validate and execute multi-send (khusus TEA)
 async function multiSend() {
   const addressesInput = document.getElementById("addresses");
   const amountsInput = document.getElementById("amounts");
@@ -676,22 +868,22 @@ async function multiSend() {
     addresses = addresses.map(addr => fixAddressChecksum(addr));
 
     if (addresses.length === 0) {
-      throw new Error("Please provide at least one recipient address.");
+      throw new Error("Please provide at least one recipient address. 😊");
     }
 
     if (addresses.length !== amounts.length) {
-      throw new Error("Number of addresses and amounts must match, or provide a single amount for all.");
+      throw new Error("Number of addresses and amounts must match, or provide a single amount for all. 😊");
     }
 
     for (const addr of addresses) {
       if (!ethers.utils.isAddress(addr)) {
-        throw new Error(`Invalid address: ${addr}`);
+        throw new Error(`Invalid address: ${addr} 😔`);
       }
     }
 
     for (const amount of amounts) {
       if (isNaN(amount) || amount <= 0) {
-        throw new Error("All amounts must be valid numbers greater than 0.");
+        throw new Error("All amounts must be valid numbers greater than 0. 😊");
       }
     }
 
@@ -701,25 +893,18 @@ async function multiSend() {
     const totalAmount = parsedAmounts.reduce((sum, amount) => sum.add(amount), ethers.BigNumber.from(0));
 
     const ethBalance = await provider.getBalance(userAddress);
-    console.log(`User TEA balance: ${ethers.utils.formatEther(ethBalance)} TEA`);
     if (ethBalance.lt(totalAmount)) {
-      throw new Error("Insufficient TEA balance.");
+      throw new Error("You don't have enough TEA to send. 😔");
     }
-
-    console.log(`Calling multiSendETH with:`);
-    console.log(`Recipients: ${addresses}`);
-    console.log(`Amounts: ${parsedAmounts.map(a => ethers.utils.formatEther(a)).join(', ')} TEA`);
-    console.log(`Total value: ${ethers.utils.formatEther(totalAmount)} TEA`);
 
     try {
       await MultiSenderContract.estimateGas.multiSendETH(addresses, parsedAmounts, {
         value: totalAmount,
         gasLimit: DEFAULT_GAS_LIMIT,
       });
-      console.log("multiSendETH gas estimation successful.");
     } catch (gasError) {
       console.error("Gas estimation failed:", gasError);
-      throw new Error(`Gas estimation failed: ${gasError.message}`);
+      throw new Error(`Gas estimation failed. Please try again or set a manual gas limit. 😔`);
     }
 
     const tx = await MultiSenderContract.multiSendETH(addresses, parsedAmounts, {
@@ -727,14 +912,20 @@ async function multiSend() {
       gasLimit: DEFAULT_GAS_LIMIT,
     });
     await tx.wait();
-    showMessage("Multi Send TEA Successful", false, tx.hash);
+    showMessage("Multi Send TEA Successful 🎉", false, tx.hash);
     logAction("Multi Send TEA", { recipients: addresses, amounts: parsedAmounts.map(a => a.toString()), txHash: tx.hash });
     await updateWalletInfo();
   } catch (error) {
     console.error("Error in multi-send:", error);
     multiSendError.textContent = error.message;
     multiSendError.classList.remove("hidden");
-    showMessage(`Failed to multi-send TEA: ${error.message}`);
+    let errorMessage = "Something went wrong while sending TEA. Please try again later. 😔";
+    if (error.code === 'ACTION_REJECTED') {
+      errorMessage = "Oops! You canceled the multi-send transaction. Please try again if you'd like to proceed. 😊";
+    } else if (error.message.includes("insufficient") || error.message.includes("Invalid address")) {
+      errorMessage = error.message; // Pesan sudah user-friendly
+    }
+    showMessage(errorMessage);
   } finally {
     hidePendingTransaction();
     multiSendBtn.disabled = false;
@@ -751,13 +942,13 @@ async function stakeTEA() {
 
     const amountFloat = parseFloat(amountInput);
     if (isNaN(amountFloat) || amountFloat <= 0) {
-      throw new Error("Please enter a valid TEA amount greater than 0.");
+      throw new Error("Please enter a valid TEA amount greater than 0. 😊");
     }
 
     const amount = ethers.utils.parseEther(amountInput);
     const teaBalance = await provider.getBalance(userAddress);
     if (teaBalance.lt(amount)) {
-      throw new Error("Insufficient TEA balance.");
+      throw new Error("You don't have enough TEA to stake. 😔");
     }
 
     showPendingTransaction("Stake TEA");
@@ -769,7 +960,7 @@ async function stakeTEA() {
       });
     } catch (gasError) {
       console.error("Gas estimation failed:", gasError);
-      throw new Error(`Gas estimation failed: ${gasError.message}`);
+      throw new Error(`Gas estimation failed. Please try again or set a manual gas limit. 😔`);
     }
 
     const tx = await StakingOSSContract.stake({
@@ -777,12 +968,18 @@ async function stakeTEA() {
       gasLimit: DEFAULT_GAS_LIMIT,
     });
     await tx.wait();
-    showMessage("TEA Staked Successfully", false, tx.hash);
+    showMessage("TEA Staked Successfully 🎉", false, tx.hash);
     logAction("Stake TEA", { amount: amount.toString(), txHash: tx.hash });
     await refreshStakingOSSInfo();
   } catch (error) {
     console.error("Error staking TEA:", error);
-    showMessage(`Failed to stake TEA: ${error.message}`);
+    let errorMessage = "Something went wrong while staking your TEA. Please try again later. 😔";
+    if (error.code === 'ACTION_REJECTED') {
+      errorMessage = "Oops! You canceled the TEA staking transaction. Please try again if you'd like to proceed. 😊";
+    } else if (error.message.includes("insufficient")) {
+      errorMessage = error.message; // Pesan sudah user-friendly
+    }
+    showMessage(errorMessage);
   } finally {
     hidePendingTransaction();
     document.getElementById("stake-tea").disabled = false;
@@ -799,13 +996,13 @@ async function unstakeTEA() {
 
     const amountFloat = parseFloat(amountInput);
     if (isNaN(amountFloat) || amountFloat <= 0) {
-      throw new Error("Please enter a valid TEA amount greater than 0.");
+      throw new Error("Please enter a valid TEA amount greater than 0. 😊");
     }
 
     const amount = ethers.utils.parseEther(amountInput);
     const userStaked = await StakingOSSContract.getStake(userAddress);
     if (userStaked.lt(amount)) {
-      throw new Error("Insufficient staked TEA balance.");
+      throw new Error("You don't have enough staked TEA to unstake. 😔");
     }
 
     showPendingTransaction("Unstake TEA");
@@ -816,19 +1013,25 @@ async function unstakeTEA() {
       });
     } catch (gasError) {
       console.error("Gas estimation failed:", gasError);
-      throw new Error(`Gas estimation failed: ${gasError.message}`);
+      throw new Error(`Gas estimation failed. Please try again or set a manual gas limit. 😔`);
     }
 
     const tx = await StakingOSSContract.unstake(amount, {
       gasLimit: DEFAULT_GAS_LIMIT,
     });
     await tx.wait();
-    showMessage("TEA Unstaked Successfully", false, tx.hash);
+    showMessage("TEA Unstaked Successfully 🎉", false, tx.hash);
     logAction("Unstake TEA", { amount: amount.toString(), txHash: tx.hash });
     await refreshStakingOSSInfo();
   } catch (error) {
     console.error("Error unstaking TEA:", error);
-    showMessage(`Failed to unstake TEA: ${error.message}`);
+    let errorMessage = "Something went wrong while unstaking your TEA. Please try again later. 😔";
+    if (error.code === 'ACTION_REJECTED') {
+      errorMessage = "Oops! You canceled the TEA unstaking transaction. Please try again if you'd like to proceed. 😊";
+    } else if (error.message.includes("insufficient")) {
+      errorMessage = error.message; // Pesan sudah user-friendly
+    }
+    showMessage(errorMessage);
   } finally {
     hidePendingTransaction();
     document.getElementById("unstake-tea").disabled = false;
@@ -837,64 +1040,32 @@ async function unstakeTEA() {
 
 document.getElementById("unstake-tea").addEventListener("click", unstakeTEA);
 
-async function withdrawTEA() {
-  try {
-    const withdrawButton = document.getElementById("withdraw-tea");
-    withdrawButton.disabled = true;
-
-    showPendingTransaction("Withdraw TEA");
-
-    try {
-      await StakingOSSContract.estimateGas.withdraw({
-        gasLimit: DEFAULT_GAS_LIMIT,
-      });
-    } catch (gasError) {
-      console.error("Gas estimation failed:", gasError);
-      throw new Error(`Gas estimation failed: ${gasError.message}`);
-    }
-
-    const tx = await StakingOSSContract.withdraw({
-      gasLimit: DEFAULT_GAS_LIMIT,
-    });
-    await tx.wait();
-    showMessage("TEA Withdrawn Successfully", false, tx.hash);
-    logAction("Withdraw TEA", { txHash: tx.hash });
-    await refreshStakingOSSInfo();
-  } catch (error) {
-    console.error("Error withdrawing TEA:", error);
-    showMessage(`Failed to withdraw TEA: ${error.message}`);
-  } finally {
-    hidePendingTransaction();
-    document.getElementById("withdraw-tea").disabled = false;
-  }
-}
-
-document.getElementById("withdraw-tea").addEventListener("click", withdrawTEA);
-
 async function refreshStakingOSSInfo() {
   try {
     const userStaked = await StakingOSSContract.getStake(userAddress);
     document.getElementById("user-staked-tea").textContent = `Staked TEA Balance: ${ethers.utils.formatEther(userStaked)} TEA`;
   } catch (error) {
     console.error("Error refreshing staking OSS info:", error);
-    showMessage(`Failed to refresh staking info: ${error.message}`);
+    let errorMessage = "Something went wrong while refreshing staking info. Please try again later. 😔";
+    if (error.code === 'ACTION_REJECTED') {
+      errorMessage = "Oops! You canceled the request to refresh staking info. Please try again if you'd like to proceed. 😊";
+    }
+    showMessage(errorMessage);
   }
 }
-
-document.getElementById("refresh-staking-tea-btn").addEventListener("click", refreshStakingOSSInfo);
 
 async function refreshCheckerTEA() {
   const checkerResult = document.getElementById("checker-result");
   checkerResult.innerHTML = "";
 
   if (!userAddress) {
-    checkerResult.textContent = "Please connect your wallet first.";
+    checkerResult.textContent = "Please connect your wallet first. 😊";
     return;
   }
 
   const activities = [
     { name: "Deploy NFT", action: "Mint NFT" },
-    { name: "Deploy Token", action: "Deploy Token" }, // Placeholder, karena belum ada fungsi deploy token
+    { name: "Deploy Token", action: "Deploy Token" },
     { name: "Add Liquidity", action: "Add Liquidity" },
     { name: "Remove Liquidity", action: "Remove Liquidity" },
     { name: "Stake LP Token", action: "Stake LP Tokens" },
@@ -934,16 +1105,13 @@ async function refreshCheckerTEA() {
   checkerResult.innerHTML = tableHTML;
 }
 
-document.getElementById("check-tea-btn").addEventListener("click", refreshCheckerTEA);
-
-// Faucet Functionality
 async function updateFaucetStatus() {
   const faucetStatus = document.getElementById("faucet-status");
   const claimButton = document.getElementById("claim-faucet");
 
   try {
     const nextClaimTime = await FaucetContract.getNextClaimTime(userAddress);
-    const currentTime = Math.floor(Date.now() / 1000); // Waktu dalam detik
+    const currentTime = Math.floor(Date.now() / 1000);
 
     if (nextClaimTime.toNumber() > currentTime) {
       const timeLeft = nextClaimTime.toNumber() - currentTime;
@@ -955,16 +1123,16 @@ async function updateFaucetStatus() {
       const faucetBalance = await FaucetContract.getFaucetBalance();
       const claimAmount = ethers.utils.parseUnits("1000", 18);
       if (faucetBalance.lt(claimAmount)) {
-        faucetStatus.textContent = "Faucet has insufficient USDT.";
+        faucetStatus.textContent = "Faucet has insufficient USDT. 😔";
         claimButton.disabled = true;
       } else {
-        faucetStatus.textContent = "You can claim 1000 USDT now.";
+        faucetStatus.textContent = "You can claim 1000 USDT now. 🎉";
         claimButton.disabled = false;
       }
     }
   } catch (error) {
     console.error("Error updating faucet status:", error);
-    faucetStatus.textContent = "Error checking faucet status.";
+    faucetStatus.textContent = "Error checking faucet status. 😔";
     claimButton.disabled = true;
   }
 }
@@ -982,7 +1150,7 @@ async function claimFaucet() {
       });
     } catch (gasError) {
       console.error("Gas estimation failed:", gasError);
-      throw new Error(`Gas estimation failed: ${gasError.message}`);
+      throw new Error(`Gas estimation failed. Please try again or set a manual gas limit. 😔`);
     }
 
     const tx = await FaucetContract.claim({
@@ -990,23 +1158,27 @@ async function claimFaucet() {
     });
     await tx.wait();
 
-    showMessage("Successfully claimed 1000 USDT", false, tx.hash);
+    showMessage("Successfully claimed 1000 USDT 🎉", false, tx.hash);
     logAction("Claim Faucet", { amount: "1000 USDT", txHash: tx.hash });
     await updateWalletInfo();
     await updateFaucetStatus();
   } catch (error) {
     console.error("Error claiming faucet:", error);
-    showMessage(`Failed to claim faucet: ${error.message}`);
+    let errorMessage = "Something went wrong while claiming the faucet. Please try again later. 😔";
+    if (error.code === 'ACTION_REJECTED') {
+      errorMessage = "Oops! You canceled the faucet claim. Please try again if you'd like to proceed. 😊";
+    }
+    showMessage(errorMessage);
   } finally {
     hidePendingTransaction();
     document.getElementById("claim-faucet").disabled = false;
-    await updateFaucetStatus(); // Pastikan status diperbarui setelah claim
+    await updateFaucetStatus();
   }
 }
 
 document.getElementById("faucet-btn").addEventListener("click", () => {
   if (!userAddress) {
-    showMessage("Please connect your wallet first.");
+    showMessage("Please connect your wallet first. 😊");
     return;
   }
   document.getElementById("faucet-modal").classList.remove("hidden");
@@ -1017,3 +1189,35 @@ document.getElementById("claim-faucet").addEventListener("click", claimFaucet);
 document.getElementById("faucet-close").addEventListener("click", () => {
   document.getElementById("faucet-modal").classList.add("hidden");
 });
+
+async function deployToken() {
+  const tokenName = document.getElementById("token-name").value;
+  const tokenSymbol = document.getElementById("token-ticker").value;
+  const tokenSupply = document.getElementById("token-supply").value;
+
+  if (!tokenName || !tokenSymbol || !tokenSupply) {
+    showMessage("Please fill in all token details. 😊");
+    return;
+  }
+
+  try {
+    showPendingTransaction("Deploy Token");
+    const factory = new ethers.ContractFactory(SimpleTokenABI, SimpleTokenBytecode, signer);
+    const contract = await factory.deploy(tokenName, tokenSymbol, ethers.BigNumber.from(tokenSupply), { gasLimit: DEFAULT_GAS_LIMIT });
+    await contract.deployed();
+    showMessage(`Token deployed successfully at address: ${contract.address} 🎉`, false, contract.deployTransaction.hash);
+    logAction("Deploy Token", { txHash: contract.deployTransaction.hash, address: contract.address });
+    await refreshCheckerTEA();
+  } catch (error) {
+    console.error("Error deploying token:", error);
+    let errorMessage = "Something went wrong while deploying your token. Please try again later. 😔";
+    if (error.code === 'ACTION_REJECTED') {
+      errorMessage = "Oops! You canceled the token deployment. Please try again if you'd like to proceed. 😊";
+    }
+    showMessage(errorMessage);
+  } finally {
+    hidePendingTransaction();
+  }
+}
+
+document.getElementById("deploy-token-btn")?.addEventListener("click", deployToken);
