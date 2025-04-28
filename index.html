@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CreamyHub</title>
+    <link rel="icon" type="image/png" href="assets/img/logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -68,24 +69,30 @@
         visibility: visible !important;
       }
       .tab {
-        flex: 1;
-        min-width: 100px;
+        min-width: 110px;
         text-align: center;
         font-semibold;
         padding: 0.5rem 1rem;
         border-radius: 0.375rem;
-        transition: background-color 0.3s;
+        transition: all 0.3s ease;
         color: #e2e8f0;
         white-space: nowrap;
         cursor: pointer;
+        display: inline-block;
+        box-sizing: border-box;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       }
       .tab:hover {
         background-color: #2d3748;
+        transform: scale(1.05);
       }
       .tab.active {
         border-b-2;
         border-blue-500;
-        background-color: #4a5568;
+        background-color: #3b82f6;
+        min-width: 110px;
+        padding: 0.5rem 1rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
       }
       .tab-container {
         background-color: #1a202c;
@@ -93,36 +100,47 @@
         border-radius: 0.5rem 0.5rem 0 0;
         display: flex;
         justify-content: space-between;
+        gap: 0.5rem;
         margin-bottom: 1rem;
-        overflow-x: auto;
-        scrollbar-width: none;
-        -ms-overflow-style: none;
+        overflow-x: hidden;
         position: relative;
       }
       .tab-container::-webkit-scrollbar {
-        display: none;
+        height: 6px;
       }
-      .tab-container::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        right: 0;
-        height: 100%;
-        width: 20px;
-        background: linear-gradient(to left, rgba(0, 0, 0, 0.2), transparent);
-        pointer-events: none;
-        opacity: 1;
-        transition: opacity 0.3s;
+      .tab-container::-webkit-scrollbar-thumb {
+        background-color: #2d3748;
+        border-radius: 6px;
+      }
+      .tab-container::-webkit-scrollbar-track {
+        background-color: #1a202c;
+        border-radius: 6px;
       }
       .tab-container.scrolled-end::after {
         opacity: 0;
       }
       #scroll-hint {
-        display: none;
         text-align: center;
         color: #718096;
         font-size: 0.75rem;
         margin-top: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.25rem;
+        animation: blink 1.5s infinite;
+      }
+      #scroll-hint svg {
+        width: 12px;
+        height: 12px;
+      }
+      @keyframes blink {
+        0%, 100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
       }
       @media (max-width: 640px) {
         .tab-container {
@@ -130,15 +148,27 @@
           justify-content: flex-start;
           gap: 0.5rem;
           padding: 0.5rem;
+          overflow-x: auto;
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+        }
+        .tab-container::-webkit-scrollbar {
+          display: none;
         }
         .tab {
           flex: none;
           min-width: 80px;
+          width: auto;
           padding: 0.5rem 0.75rem;
           font-size: 0.875rem;
         }
+        .tab.active {
+          min-width: 80px;
+          width: auto;
+          padding: 0.5rem 0.75rem;
+        }
         #scroll-hint {
-          display: block;
+          display: flex;
         }
         #scroll-hint.hidden {
           display: none;
@@ -153,27 +183,45 @@
         .tab-content {
           padding: 1rem;
         }
-        /* Jarakkan tombol Faucet dari CreamyHub dan pastikan navbar lebih seimbang */
         #faucet-btn {
-          margin-left: 1rem;
-          margin-right: 0.5rem;
+          margin-left: 0;
+          margin-right: 0;
         }
         .nav-tools-text {
-          margin-right: 0.5rem;
+          margin-right: 0;
         }
-        /* Perkecil ukuran pop-up di mobile */
         #message .bg-white {
           max-width: 90%;
           padding: 1rem;
         }
         #message h2 {
-          font-size: 1.125rem; /* 18px */
+          font-size: 1.125rem;
         }
         #message p {
-          font-size: 0.875rem; /* 14px */
+          font-size: 0.875rem;
         }
         #message button {
           padding: 0.5rem 1rem;
+        }
+        nav {
+          padding: 1rem !important;
+        }
+        #wallet-info p#wallet-address {
+          overflow-wrap: break-word;
+          max-width: 100%;
+          font-size: 0.75rem;
+          padding: 0.25rem 0;
+        }
+        #wallet-info .wallet-card {
+          padding: 0.75rem;
+        }
+      }
+      @media (min-width: 641px) {
+        .tab-container {
+          overflow-x: hidden;
+        }
+        #scroll-hint {
+          display: none;
         }
       }
       .toggle-container {
@@ -184,7 +232,7 @@
       .toggle-switch {
         position: relative;
         display: inline-block;
-        width: 60px;
+        width: 50px;
         height: 34px;
       }
       .toggle-switch input {
@@ -222,7 +270,7 @@
         background-color: #4CAF50;
       }
       input:checked + .slider:before {
-        transform: translateX(26px);
+        transform: translateX(16px);
         content: "🌙";
       }
       .tea-leaves-container {
@@ -272,17 +320,21 @@
         border-radius: 0.5rem;
         padding: 1rem;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        border: 2px solid #d1d5db;
       }
       body.dark #wallet-info .wallet-card {
         background-color: #2d3748;
+        border-color: #718096;
       }
       #wallet-info p {
         margin-bottom: 0.5rem;
         font-size: 0.875rem;
+        text-align: left;
       }
       #wallet-info p#wallet-address {
         font-weight: 600;
         color: #1f2937;
+        overflow-wrap: break-word;
       }
       body.dark #wallet-info p#wallet-address {
         color: #e2e8f0;
@@ -298,6 +350,9 @@
       }
       #message a:hover {
         color: #2563eb;
+      }
+      #message-text {
+        overflow-wrap: break-word;
       }
       .view-explorer {
         color: #3b82f6;
@@ -315,6 +370,126 @@
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
       }
+      #checker-tea table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: #fff;
+        color: #1f2937;
+      }
+      #checker-tea th,
+      #checker-tea td {
+        padding: 0.5rem;
+        text-align: left;
+        border-bottom: 1px solid #e5e7eb;
+      }
+      #checker-tea th {
+        font-weight: 600;
+        color: #1f2937;
+      }
+      #checker-tea td {
+        color: #4b5563;
+      }
+      body.dark #checker-tea table {
+        background-color: #2d3748;
+      }
+      body.dark #checker-tea th {
+        color: #e2e8f0;
+      }
+      body.dark #checker-tea td {
+        color: #a0aec0;
+      }
+      body.dark #checker-tea td svg {
+        stroke: #a0aec0;
+      }
+      body.dark nav .text-xl {
+        color: #e2e8f0;
+      }
+      body.dark .nav-tools-text {
+        color: #a0aec0;
+      }
+      body.dark #mint-nft h3 {
+        color: #e2e8f0;
+      }
+      body.dark #mint-nft ul {
+        color: #a0aec0;
+      }
+      .network-dot {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        background-color: #4CAF50;
+        border-radius: 50%;
+        margin-left: 0.5rem;
+        animation: blink 1.5s infinite;
+      }
+      @keyframes blink {
+        0%, 100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0;
+        }
+      }
+      nav {
+        padding-right: 1.5rem !important;
+      }
+      #liquidity-pool .section-border {
+        border: 1px solid #d1d5db;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+      }
+      body.dark #liquidity-pool .section-border {
+        border-color: #718096;
+      }
+      #slippage-tolerance::-webkit-outer-spin-button,
+      #slippage-tolerance::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+      #slippage-tolerance {
+        -moz-appearance: textfield;
+      }
+      #connect-wallet-section {
+        text-align: center;
+        padding: 2rem;
+      }
+      #connect-wallet-section img {
+        width: 128px;
+        height: 128px;
+        margin: 0 auto 1rem;
+        animation: float 3s ease-in-out infinite;
+      }
+      @keyframes float {
+        0%, 100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+      }
+      #connect-wallet-section h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1f2937;
+      }
+      body.dark #connect-wallet-section h1 {
+        color: #e2e8f0;
+      }
+      #connect-wallet-section p {
+        color: #4b5563;
+        margin-bottom: 1.5rem;
+      }
+      body.dark #connect-wallet-section p {
+        color: #a0aec0;
+      }
+      #connect-wallet {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease;
+      }
+      #connect-wallet:hover {
+        transform: scale(1.05);
+      }
     </style>
 </head>
 <body class="h-screen bg-gray-100 flex flex-col items-center p-4 gap-4">
@@ -329,12 +504,12 @@
         <div class="tea-leaf"></div>
     </div>
 
-    <nav class="w-full bg-white rounded-lg shadow-lg p-4 flex items-center justify-between">
-        <div class="text-xl font-bold text-gray-800">CreamyHub</div>
+    <nav class="w-full bg-white rounded-lg shadow-lg p-4 flex flex-col sm:flex-row items-center justify-between gap-2">
         <div class="flex items-center gap-2">
-            <button id="faucet-btn" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-1 px-3 rounded-lg transition-colors">
-                Faucet
-            </button>
+            <img src="assets/img/logo.png" alt="CreamyHub Logo" width="32" height="32">
+            <div class="text-xl font-bold text-gray-800">CreamyHub</div>
+        </div>
+        <div class="flex items-center gap-2 flex-wrap justify-center">
             <div class="text-sm text-gray-600 nav-tools-text">Tea Sepolia Tools</div>
             <div class="toggle-container">
                 <label class="toggle-switch">
@@ -342,12 +517,17 @@
                     <span class="slider"></span>
                 </label>
             </div>
+            <button id="faucet-btn" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-1 px-3 rounded-lg transition-colors">
+                Faucet
+            </button>
         </div>
     </nav>
 
     <div id="main-section" class="flex-1 w-full max-w-3xl bg-white rounded-lg shadow-lg p-4 flex flex-col justify-center">
         <div id="connect-wallet-section" class="">
-            <h1 class="text-2xl font-bold text-center text-gray-800 mb-4">Connect Your Wallet</h1>
+            <img src="assets/img/logo.png" alt="CreamyHub Hero" class="mx-auto">
+            <h1 class="text-2xl font-bold text-center text-gray-800 mb-2">Connect Your Wallet</h1>
+            <p class="text-center text-gray-600 mb-4">Join the Tea Sepolia network and start exploring CreamyHub's tools!</p>
             <button id="connect-wallet" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
                 Connect Wallet
             </button>
@@ -355,10 +535,12 @@
 
         <div id="wallet-info" class="hidden mb-4 border-b border-gray-200 pb-4">
             <div class="wallet-card">
-                <p id="wallet-address" class="text-center break-all"></p>
-                <p id="usdt-balance" class="text-center text-gray-700"></p>
-                <p id="tea-balance" class="text-center"></p>
-                <p id="network" class="text-center text-gray-700"></p>
+                <p id="network">
+                    Network: Tea Sepolia <span class="network-dot"></span>
+                </p>
+                <p id="wallet-address"></p>
+                <p id="usdt-balance"></p>
+                <p id="tea-balance"></p>
             </div>
             <div class="flex justify-center gap-2 mt-4 flex-wrap">
                 <button id="copy-address" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-1 px-3 rounded-lg transition-colors">
@@ -380,11 +562,17 @@
             <div class="tab-container" id="tab-container">
                 <button class="tab active" data-tab="mint-nft">Mint NFT</button>
                 <button class="tab" data-tab="liquidity-pool">Liquidity Pool</button>
-                <button class="tab" data-tab="multi-sender">Multi Sender</button>
-                <button class="tab" data-tab="staking-oss">Staking TEA</button>
+                <button class="tab" data-tab="multi-sender">Multi Send</button>
+                <button class="tab" data-tab="staking-oss">Staking OSS</button>
                 <button class="tab" data-tab="checker-tea">Checker TEA</button>
+                <button class="tab" data-tab="deploy-token">Deploy Token</button>
             </div>
-            <div id="scroll-hint" class="scroll-hint">Swipe to see more</div>
+            <div id="scroll-hint" class="scroll-hint">
+                Scroll to see more
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+            </div>
 
             <div id="mint-nft" class="tab-content p-4 border border-gray-200 rounded-lg">
                 <h2 class="text-xl font-semibold text-gray-800 mb-2">Mint NFT</h2>
@@ -393,38 +581,70 @@
                     <h3 class="text-lg font-semibold text-gray-800 mb-2">Your NFTs</h3>
                     <ul id="user-nfts" class="list-disc pl-5 text-gray-600 mb-4"></ul>
                 </div>
-                <button id="refresh-nft-state" class="w-full bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors mb-4">
-                    Refresh NFT State
-                </button>
                 <button id="mint-btn" class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
                     Mint NFT
                 </button>
             </div>
 
+            <div id="deploy-token" class="tab-content hidden p-4 border border-gray-200 rounded-lg">
+                <h2 class="text-xl font-semibold text-gray-800 mb-2">Deploy Token</h2>
+                <p class="text-gray-600 mb-4">Deploy your own ERC-20 token on the Tea Sepolia network.</p>
+                <input id="token-name" type="text" placeholder="Token Name (e.g., MyToken)" class="w-full p-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input id="token-ticker" type="text" placeholder="Token Ticker (e.g., MTK)" class="w-full p-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input id="token-supply" type="text" placeholder="Total Supply (e.g., 1000000)" class="w-full p-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <div id="deploy-token-error" class="text-red-500 mt-2 hidden"></div>
+                <button id="deploy-token-btn" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+                    Deploy Token
+                </button>
+            </div>
+
             <div id="liquidity-pool" class="tab-content hidden p-4 border border-gray-200 rounded-lg">
-                <div class="mb-6">
+                <div class="section-border">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-2">Liquidity Pool Info</h2>
+                    <p id="pool-tea-reserve" class="text-gray-600 mb-2">TEA Reserve in pools: 0 TEA</p>
+                    <p id="pool-eth-reserve" class="text-gray-600 mb-2">USDT Reserve in pools: 0 USDT</p>
+                    <p id="total-liquidity" class="text-gray-600 mb-2">Total Liquidity in pools all user: 0 LP Tokens</p>
+                </div>
+
+                <div class="section-border">
                     <h2 class="text-xl font-semibold text-gray-800 mb-2">Add Liquidity</h2>
                     <p class="text-gray-600 mb-4">Add liquidity to the TEA/USDT pool and receive LP tokens.</p>
                     <input id="tea-amount" type="text" placeholder="Amount of TEA (e.g., 1)" class="w-full p-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <p id="required-usdt" class="text-gray-600 mb-2">Required USDT: 0 (based on pool ratio)</p>
                     <input id="usdt-amount" type="text" placeholder="Amount of USDT (e.g., 1000)" class="w-full p-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <input id="slippage-tolerance" type="text" placeholder="Slippage Tolerance (%) (e.g., 1)" value="1" class="w-full p-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <div class="mb-4">
+                        <label for="slippage-tolerance" class="block text-gray-600 mb-1">Slippage Tolerance (%)</label>
+                        <div class="flex items-center gap-2">
+                            <input id="slippage-tolerance" type="number" step="0.1" min="0.1" max="100" value="1" placeholder="e.g., 1" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <button id="slippage-info" class="text-blue-500 hover:text-blue-600" title="Slippage tolerance ensures your transaction won't fail if the price changes by this percentage.">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
                     <div id="liquidity-error" class="text-red-500 mt-2 hidden"></div>
+                    <button id="approve-add-liquidity" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors hidden">
+                        Approve USDT
+                    </button>
                     <button id="add-liquidity" class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
                         Add Liquidity
                     </button>
                 </div>
 
-                <div class="mb-6">
+                <div class="section-border">
                     <h2 class="text-xl font-semibold text-gray-800 mb-2">Remove Liquidity</h2>
                     <p class="text-gray-600 mb-4">Remove liquidity from the TEA/USDT pool and burn your LP tokens. Slippage is set to 1%.</p>
                     <input id="liquidity-amount" type="text" placeholder="Amount of LP Tokens" class="w-full p-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <p id="user-liquidity" class="text-gray-600 mb-2">Your Liquidity token: 0 LP Tokens</p>
+                    <button id="approve-remove-liquidity" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors hidden">
+                        Approve USDT
+                    </button>
                     <button id="remove-liquidity" class="w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
                         Remove Liquidity
                     </button>
                 </div>
 
-                <div class="mb-6">
+                <div class="section-border">
                     <h2 class="text-xl font-semibold text-gray-800 mb-2">Stake LP Tokens</h2>
                     <p class="text-gray-600 mb-4">Stake your LP tokens to earn TEA rewards.</p>
                     <input id="stake-lp-amount" type="text" placeholder="Amount of LP Tokens to Stake" class="w-full p-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -432,23 +652,21 @@
                     <input id="unstake-lp-amount" type="text" placeholder="Amount of LP Tokens to Unstake" class="w-full p-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <div id="unstake-lp-error" class="text-red-500 mt-2 hidden"></div>
                     <div class="flex flex-col sm:flex-row gap-2">
-                        <button id="stake-lp" class="flex-1 bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
-                            Stake LP Tokens
-                        </button>
-                        <button id="unstake-lp" class="flex-1 bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
-                            Unstake LP Tokens
-                        </button>
+                        <div class="flex-1">
+                            <button id="approve-stake-lp" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors hidden">
+                                Approve LP Token
+                            </button>
+                            <button id="stake-lp" class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+                                Stake LP Tokens
+                            </button>
+                        </div>
+                        <div class="flex-1">
+                            <button id="unstake-lp" class="w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+                                Unstake LP Tokens
+                            </button>
+                        </div>
                     </div>
-                </div>
-
-                <div>
-                    <h2 class="text-xl font-semibold text-gray-800 mb-2">Liquidity Pool Info</h2>
-                    <p id="pool-tea-reserve" class="text-gray-600 mb-2">TEA Reserve: 0 TEA</p>
-                    <p id="pool-eth-reserve" class="text-gray-600 mb-2">USDT Reserve: 0 USDT</p>
-                    <p id="total-liquidity" class="text-gray-600 mb-2">Total Liquidity: 0 LP Tokens</p>
-                    <p id="user-liquidity" class="text-gray-600 mb-2">Your Liquidity: 0 LP Tokens</p>
-                    <p id="user-staked-lp" class="text-gray-600 mb-2">Staked LP Balance: 0 LP Tokens</p>
-                    <p id="user-pending-rewards" class="text-gray-600 mb-2">Pending Rewards: 0 TEA</p>
+                    <p id="user-staked-lp" class="text-gray-600 mt-2">Staked LP Balance: 0 LP Tokens</p>
                 </div>
             </div>
 
@@ -467,7 +685,7 @@
             </div>
 
             <div id="staking-oss" class="tab-content hidden p-4 border border-gray-200 rounded-lg">
-                <h2 class="text-xl font-semibold text-gray-800 mb-2">Staking TEA</h2>
+                <h2 class="text-xl font-semibold text-gray-800 mb-2">Staking OSS</h2>
                 <p class="text-gray-600 mb-4">Stake or unstake your TEA tokens to earn rewards.</p>
                 <p id="user-staked-tea" class="text-gray-600 mb-4">Staked TEA Balance: 0 TEA</p>
                 <input id="stake-tea-amount" type="text" placeholder="Amount to Stake (TEA)" class="w-full p-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -481,22 +699,13 @@
                     <button id="unstake-tea" class="flex-1 bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
                         Unstake TEA
                     </button>
-                    <button id="withdraw-tea" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
-                        Withdraw TEA
-                    </button>
                 </div>
-                <button id="refresh-staking-tea-btn" class="w-full bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors mt-4">
-                    Refresh Staking TEA
-                </button>
             </div>
 
             <div id="checker-tea" class="tab-content hidden p-4 border border-gray-200 rounded-lg">
                 <h2 class="text-xl font-semibold text-gray-800 mb-2">Checker TEA</h2>
                 <p class="text-gray-600 mb-4">Check your activities on the Tea Sepolia network.</p>
                 <div id="checker-result" class="mt-4"></div>
-                <button id="check-tea-btn" class="mt-4 w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
-                    Check Activities
-                </button>
             </div>
         </div>
     </div>
@@ -594,7 +803,7 @@
             document.body.classList.toggle('dark', themeToggle.checked);
         });
 
-        // Scroll hint toggle for tab container
+        // Scroll hint toggle for tab container (only for mobile)
         const tabContainer = document.getElementById('tab-container');
         const scrollHint = document.getElementById('scroll-hint');
         if (tabContainer && scrollHint) {
